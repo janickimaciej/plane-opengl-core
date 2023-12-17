@@ -18,28 +18,31 @@ namespace Physics
 		static constexpr int simulationBufferSize = framesPerSecond;
 
 		SimulationBuffer(int ownId);
-
-		void writeControlFrame(const Timestep& timestep, int playerId,
-			const PlayerInput& playerInput);
+		
 		void writeStateFrame(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
-
-		bool setOwnInput(const Timestep& timestep, const PlayerInput& ownInput);
+		void writeInitFrame(const Timestep& timestep, int playerId, const PlayerInfo& playerInfo);
+		bool writeControlFrame(const Timestep& timestep, int playerId,
+			const PlayerInput& playerInput);
 		void update(const Timestep& timestep);
 		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(const Timestep& timestep);
+		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep);
 
 	private:
 		std::array<SimulationBufferElement, simulationBufferSize> m_buffer{};
 		int m_ownId{};
 
-		void removePlayerInputs(const Timestep& timestep,
+		void removePlayers(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
-		void addAndUpdatePlayerInputs(const Timestep& timestep,
+		void addAndUpdatePlayers(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
 
-		void removePlayerInputs(const Timestep& previousTimestep, const Timestep& timestep);
-		void addAndUpdatePlayerInputs(const Timestep& previousTimestep, const Timestep& timestep);
+		void removePlayers(const Timestep& previousTimestep, const Timestep& timestep);
+		void addAndUpdatePlayers(const Timestep& previousTimestep, const Timestep& timestep);
+
+		void clearLocks(const Timestep& timestep);
 		void updateScene(const Timestep& previousTimestep, const Timestep& timestep,
-			const std::unordered_map<int, PlayerInfo>& playerInfos, bool hasStateFrame);
+			const std::unordered_map<int, PlayerInfo>& playerInfos,
+			const std::unordered_map<int, bool>& stateLocks);
 	};
 };

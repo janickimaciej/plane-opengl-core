@@ -13,6 +13,6 @@ namespace Physics
 		Scene scene{};
 		std::mutex mutex{};
 		std::unordered_map<int, SimulationBufferPlayer> players{};
-		bool hasStateFrame{};
+		bool lock{};
 	};
 };

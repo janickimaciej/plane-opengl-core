@@ -19,8 +19,20 @@ namespace Physics
 		m_ownId{ownId}
 	{ }
 
-	void SimulationBuffer::writeControlFrame(const Timestep& timestep, int playerId,
-		const PlayerInput& playerInput)
+	void SimulationBuffer::writeStateFrame(const Timestep& timestep,
+		const std::unordered_map<int, PlayerInfo>& playerInfos)
+	{
+		m_buffer[timestep.frame].mutex.lock();
+
+		removePlayers(timestep, playerInfos);
+		addAndUpdatePlayers(timestep, playerInfos);
+		m_buffer[timestep.frame].lock = true;
+
+		m_buffer[timestep.frame].mutex.unlock();
+	}
+
+	void SimulationBuffer::writeInitFrame(const Timestep& timestep, int playerId,
+		const PlayerInfo& playerInfo)
 	{
 		m_buffer[timestep.frame].mutex.lock();
 
@@ -35,67 +47,31 @@ namespace Physics
 						!isSecondOdd,
 						isSecondOdd
 					},
-					PlayerInfo
+					std::array<bool, 2>
 					{
-						playerInput,
-						PlayerState{}
-					}
+						false,
+						false
+					},
+					playerInfo
 				}});
 		}
-		else if ((!isSecondOdd &&
-			!m_buffer[timestep.frame].players.at(playerId).hasControlFrame[0]) ||
-			(isSecondOdd && !m_buffer[timestep.frame].players.at(playerId).hasControlFrame[1]))
-		{
-			m_buffer[timestep.frame].players.at(playerId).hasControlFrame[isSecondOdd] = true;
-			m_buffer[timestep.frame].players.at(playerId).info.input = playerInput;
-		}
 
 		m_buffer[timestep.frame].mutex.unlock();
 	}
 
-	void SimulationBuffer::writeStateFrame(const Timestep& timestep,
-		const std::unordered_map<int, PlayerInfo>& playerInfos)
-	{
-		m_buffer[timestep.frame].mutex.lock();
-
-		removePlayerInputs(timestep, playerInfos);
-		addAndUpdatePlayerInputs(timestep, playerInfos);
-		m_buffer[timestep.frame].hasStateFrame = true;
-
-		m_buffer[timestep.frame].mutex.unlock();
-	}
-
-	bool SimulationBuffer::setOwnInput(const Timestep& timestep,
-		const PlayerInput& ownInput)
+	bool SimulationBuffer::writeControlFrame(const Timestep& timestep, int playerId,
+		const PlayerInput& playerInput)
 	{
 		m_buffer[timestep.frame].mutex.lock();
 
 		bool isSecondOdd = timestep.second % 2;
 		bool inputSet = false;
-		if (!m_buffer[timestep.frame].players.contains(m_ownId))
+		if (m_buffer[timestep.frame].players.contains(playerId) && !m_buffer[timestep.frame].lock &&
+			((!isSecondOdd && !m_buffer[timestep.frame].players.at(playerId).lockInput[0]) ||
+			(isSecondOdd && !m_buffer[timestep.frame].players.at(playerId).lockInput[1])))
 		{
-			m_buffer[timestep.frame].players.insert({m_ownId,
-				SimulationBufferPlayer
-				{
-					std::array<bool, 2>
-					{
-						!isSecondOdd,
-						isSecondOdd
-					},
-					PlayerInfo
-					{
-						ownInput,
-						PlayerState{}
-					}
-				}});
-			inputSet = true;
-		}
-		else if ((!isSecondOdd &&
-			!m_buffer[timestep.frame].players.at(m_ownId).hasControlFrame[0]) ||
-			(isSecondOdd && !m_buffer[timestep.frame].players.at(m_ownId).hasControlFrame[1]))
-		{
-			m_buffer[timestep.frame].players.at(m_ownId).hasControlFrame[isSecondOdd] = true;
-			m_buffer[timestep.frame].players.at(m_ownId).info.input = ownInput;
+			m_buffer[timestep.frame].players.at(playerId).lockInput[isSecondOdd] = true;
+			m_buffer[timestep.frame].players.at(playerId).info.input = playerInput;
 			inputSet = true;
 		}
 
@@ -111,24 +87,30 @@ namespace Physics
 		m_buffer[previousTimestep.frame].mutex.lock();
 		m_buffer[timestep.frame].mutex.lock();
 		
-		if (!m_buffer[timestep.frame].hasStateFrame)
+		if (!m_buffer[timestep.frame].lock)
 		{
-			removePlayerInputs(previousTimestep, timestep);
-			addAndUpdatePlayerInputs(previousTimestep, timestep);
+			removePlayers(previousTimestep, timestep);
+			addAndUpdatePlayers(previousTimestep, timestep);
 		}
+
+		bool isSecondOdd = timestep.second % 2;
 		std::unordered_map<int, PlayerInfo> playerInfos;
+		std::unordered_map<int, bool> stateLocks;
 		for (const std::pair<const int, SimulationBufferPlayer>& player :
 			m_buffer[timestep.frame].players)
 		{
 			playerInfos.insert({player.first, player.second.info});
+			stateLocks.insert({player.first,
+				m_buffer[timestep.frame].lock ||
+				m_buffer[timestep.frame].players[player.first].lockState[isSecondOdd]});
 		}
-		bool hasStateFrame = m_buffer[timestep.frame].hasStateFrame;
-		m_buffer[timestep.frame].hasStateFrame = false;
+
+		clearLocks(timestep);
 		
 		m_buffer[previousTimestep.frame].mutex.unlock();
 		m_buffer[timestep.frame].mutex.unlock();
 
-		updateScene(previousTimestep, timestep, playerInfos, hasStateFrame);
+		updateScene(previousTimestep, timestep, playerInfos, stateLocks);
 	}
 
 	std::unordered_map<int, Common::AirplaneInfo> SimulationBuffer::getAirplaneInfos(
@@ -144,7 +126,24 @@ namespace Physics
 		return airplaneInfos;
 	}
 
-	void SimulationBuffer::removePlayerInputs(const Timestep& timestep,
+	std::unordered_map<int, Physics::PlayerInfo> SimulationBuffer::getPlayerInfos(
+		const Timestep& timestep)
+	{
+		m_buffer[timestep.frame].mutex.lock();
+		
+		std::unordered_map<int, Physics::PlayerInfo> playerInfos{};
+		for (const std::pair<const int, SimulationBufferPlayer>& playerInfo :
+			m_buffer[timestep.frame].players)
+		{
+			playerInfos.insert({playerInfo.first, playerInfo.second.info});
+		}
+
+		m_buffer[timestep.frame].mutex.unlock();
+
+		return playerInfos;
+	}
+
+	void SimulationBuffer::removePlayers(const Timestep& timestep,
 		const std::unordered_map<int, PlayerInfo>& playerInfos)
 	{
 		std::vector<int> keysToBeDeleted;
@@ -162,25 +161,46 @@ namespace Physics
 		}
 	}
 
-	void SimulationBuffer::addAndUpdatePlayerInputs(const Timestep& timestep,
+	void SimulationBuffer::addAndUpdatePlayers(const Timestep& timestep,
 		const std::unordered_map<int, PlayerInfo>& playerInfos)
 	{
-		bool isSecondOdd = timestep.second % 2;
 		for (const std::pair<const int, PlayerInfo>& playerInfo : playerInfos)
 		{
-			m_buffer[timestep.frame].players[playerInfo.first].hasControlFrame[isSecondOdd] = true;
-			m_buffer[timestep.frame].players[playerInfo.first].info = playerInfo.second;
+			if (!m_buffer[timestep.frame].players.contains(playerInfo.first))
+			{
+				m_buffer[timestep.frame].players.insert({playerInfo.first,
+					SimulationBufferPlayer
+					{
+						std::array<bool, 2>
+						{
+							false,
+							false
+						},
+						std::array<bool, 2>
+						{
+							false,
+							false
+						},
+						playerInfo.second
+					}});
+			}
+			else
+			{
+				m_buffer[timestep.frame].players[playerInfo.first].info = playerInfo.second;
+			}
 		}
 	}
 
-	void SimulationBuffer::removePlayerInputs(const Timestep& previousTimestep,
+	void SimulationBuffer::removePlayers(const Timestep& previousTimestep,
 		const Timestep& timestep)
 	{
 		std::vector<int> keysToBeDeleted;
+		bool isSecondOdd = timestep.second % 2;
 		for (std::pair<const int, SimulationBufferPlayer>& player :
 			m_buffer[timestep.frame].players)
 		{
-			if (!m_buffer[previousTimestep.frame].players.contains(player.first))
+			if (!player.second.lockState[isSecondOdd] &&
+				!m_buffer[previousTimestep.frame].players.contains(player.first))
 			{
 				keysToBeDeleted.push_back(player.first);
 			}
@@ -191,7 +211,7 @@ namespace Physics
 		}
 	}
 
-	void SimulationBuffer::addAndUpdatePlayerInputs(const Timestep& previousTimestep,
+	void SimulationBuffer::addAndUpdatePlayers(const Timestep& previousTimestep,
 		const Timestep& timestep)
 	{
 		bool isSecondOdd = timestep.second % 2;
@@ -208,6 +228,11 @@ namespace Physics
 							false,
 							false
 						},
+						std::array<bool, 2>
+						{
+							false,
+							false
+						},
 						PlayerInfo
 						{
 							previousTimestepPlayer.second.info.input,
@@ -216,32 +241,34 @@ namespace Physics
 					}});
 			}
 			else if (!m_buffer[timestep.frame].players[previousTimestepPlayer.first].
-				hasControlFrame[isSecondOdd])
+				lockState[isSecondOdd] &&
+				!m_buffer[timestep.frame].players[previousTimestepPlayer.first].
+				lockInput[isSecondOdd])
 			{
 				m_buffer[timestep.frame].players[previousTimestepPlayer.first].info.input =
 					previousTimestepPlayer.second.info.input;
 			}
 		}
+	}
+
+	void SimulationBuffer::clearLocks(const Timestep& timestep)
+	{
+		m_buffer[timestep.frame].lock = false;
+
+		bool isSecondOdd = timestep.second % 2;
 		for (std::pair<const int, SimulationBufferPlayer>& player :
 			m_buffer[timestep.frame].players)
 		{
-			player.second.hasControlFrame[!isSecondOdd] = false;
+			player.second.lockState[!isSecondOdd] = false;
+			player.second.lockInput[!isSecondOdd] = false;
 		}
 	}
 
 	void SimulationBuffer::updateScene(const Timestep& previousTimestep,
 		const Timestep& timestep, const std::unordered_map<int, PlayerInfo>& playerInfos,
-		bool hasStateFrame)
+		const std::unordered_map<int, bool>& stateLocks)
 	{
-		if (hasStateFrame)
-		{
-			m_buffer[timestep.frame].scene.updateWithStateFrame(
-				m_buffer[previousTimestep.frame].scene, playerInfos);
-		}
-		else
-		{
-			m_buffer[timestep.frame].scene.updateWithoutStateFrame(
-				m_buffer[previousTimestep.frame].scene, playerInfos);
-		}
+		m_buffer[timestep.frame].scene.update(m_buffer[previousTimestep.frame].scene, playerInfos,
+			stateLocks);
 	}
 };

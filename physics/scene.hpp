@@ -12,10 +12,9 @@ namespace Physics
 	class Scene
 	{
 	public:
-		void updateWithoutStateFrame(const Scene& previousScene,
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
-		void updateWithStateFrame(const Scene& previousScene,
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
+		void update(const Scene& previousScene,
+			const std::unordered_map<int, PlayerInfo>& playerInfos,
+			const std::unordered_map<int, bool>& stateLocks);
 		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos() const;
 
 	private:
@@ -24,17 +23,11 @@ namespace Physics
 
 		DayNightCycle m_dayNightCycle{};
 
-		void removeAirplanesWithoutStateFrame(const Scene& previousScene);
-		void addAndUpdateAirplanesWithoutStateFrame(const Scene& previousScene,
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
-
-		void removeAirplanesWithStateFrame(
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
-		void addAndUpdateAirplanesWithStateFrame(
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
-
-		void updateCommon(const Scene& previousScene);
-
+		void removeAirplanes(const Scene& previousScene,
+			const std::unordered_map<int, bool>& stateLocks);
+		void addAndUpdateAirplanes(const Scene& previousScene,
+			const std::unordered_map<int, PlayerInfo>& playerInfos,
+			const std::unordered_map<int, bool>& stateLocks);
 		void updateBullets(/*const Scene& previousScene*/);
 		void detectCollisions();
 	};
