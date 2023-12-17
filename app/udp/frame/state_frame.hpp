@@ -17,7 +17,7 @@ namespace App
 
 	struct StateFrame
 	{
-		unsigned char frameType = toUInt8(UDPFrameType::state);
+		unsigned char frameType = toUChar(UDPFrameType::state);
 		std::array<unsigned char, 2> timestep{};
 		std::vector<StateFramePlayerInfo> playerInfos{};
 	};

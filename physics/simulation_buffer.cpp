@@ -19,18 +19,6 @@ namespace Physics
 		m_ownId{ownId}
 	{ }
 
-	void SimulationBuffer::writeStateFrame(const Timestep& timestep,
-		const std::unordered_map<int, PlayerInfo>& playerInfos)
-	{
-		m_buffer[timestep.frame].mutex.lock();
-
-		removePlayers(timestep, playerInfos);
-		addAndUpdatePlayers(timestep, playerInfos);
-		m_buffer[timestep.frame].lock = true;
-
-		m_buffer[timestep.frame].mutex.unlock();
-	}
-
 	void SimulationBuffer::writeInitFrame(const Timestep& timestep, int playerId,
 		const PlayerInfo& playerInfo)
 	{
@@ -78,6 +66,18 @@ namespace Physics
 		m_buffer[timestep.frame].mutex.unlock();
 
 		return inputSet;
+	}
+
+	void SimulationBuffer::writeStateFrame(const Timestep& timestep,
+		const std::unordered_map<int, PlayerInfo>& playerInfos)
+	{
+		m_buffer[timestep.frame].mutex.lock();
+
+		removePlayers(timestep, playerInfos);
+		addAndUpdatePlayers(timestep, playerInfos);
+		m_buffer[timestep.frame].lock = true;
+
+		m_buffer[timestep.frame].mutex.unlock();
 	}
 
 	void SimulationBuffer::update(const Timestep& timestep)

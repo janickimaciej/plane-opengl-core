@@ -19,11 +19,11 @@ namespace Physics
 
 		SimulationBuffer(int ownId);
 		
-		void writeStateFrame(const Timestep& timestep,
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
 		void writeInitFrame(const Timestep& timestep, int playerId, const PlayerInfo& playerInfo);
 		bool writeControlFrame(const Timestep& timestep, int playerId,
 			const PlayerInput& playerInput);
+		void writeStateFrame(const Timestep& timestep,
+			const std::unordered_map<int, PlayerInfo>& playerInfos);
 		void update(const Timestep& timestep);
 		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(const Timestep& timestep);
 		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep);

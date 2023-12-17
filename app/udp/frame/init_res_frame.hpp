@@ -10,7 +10,7 @@ namespace App
 {
 	struct InitResFrame
 	{
-		unsigned char frameType = toUInt8(UDPFrameType::initRes);
+		unsigned char frameType = toUChar(UDPFrameType::initRes);
 		std::array<unsigned char, 2> clientTimestamp{};
 		std::array<unsigned char, 2> serverTimestamp{};
 		unsigned char playerId{};

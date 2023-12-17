@@ -12,5 +12,6 @@ namespace App
 		state
 	};
 
+	unsigned char toUChar(UDPFrameType udpFrameType);
 	uint8_t toUInt8(UDPFrameType udpFrameType);
 };

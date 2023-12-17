@@ -8,4 +8,9 @@ namespace Common
 	{
 		return static_cast<uint8_t>(airplaneTypeName);
 	}
+
+	AirplaneTypeName fromUChar(unsigned char airplaneTypeName)
+	{
+		return static_cast<AirplaneTypeName>(airplaneTypeName);
+	}
 };

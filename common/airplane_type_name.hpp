@@ -12,4 +12,5 @@ namespace Common
 	};
 
 	unsigned char toUChar(AirplaneTypeName airplaneTypeName);
+	AirplaneTypeName fromUChar(unsigned char airplaneTypeName);
 };

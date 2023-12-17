@@ -10,7 +10,7 @@ namespace App
 {
 	struct ControlFrame
 	{
-		unsigned char frameType = toUInt8(UDPFrameType::control);
+		unsigned char frameType = toUChar(UDPFrameType::control);
 		std::array<unsigned char, 2> clientTimestamp{};
 		std::array<unsigned char, 2> serverTimestamp{};
 		std::array<unsigned char, 2> timestep{};

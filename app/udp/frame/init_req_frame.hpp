@@ -10,7 +10,7 @@ namespace App
 {
 	struct InitReqFrame
 	{
-		unsigned char frameType = toUInt8(UDPFrameType::initReq);
+		unsigned char frameType = toUChar(UDPFrameType::initReq);
 		std::array<unsigned char, 2> clientTimestamp{};
 		unsigned char airplaneType{};
 	};

@@ -41,6 +41,13 @@ namespace Common
 		array[12] = angVelocityRad.z;
 	}
 
+	std::array<float, State::stateLength> State::toArray() const
+	{
+		std::array<float, stateLength> array{};
+		toArray(array);
+		return array;
+	}
+
 	glm::mat4 State::matrix() const
 	{
 		glm::mat4 orientationMatrix = glm::mat4_cast(orientation);

@@ -22,11 +22,19 @@ namespace App
 	public:
 		static void serializeInitReqFrame(const Physics::Timestamp& clientTimestamp,
 			Common::AirplaneTypeName airplaneTypeName, std::vector<std::uint8_t>& buffer);
+		static void serializeInitResFrame(const Physics::Timestamp& clientTimestamp,
+			const Physics::Timestamp& serverTimestamp, int playerId,
+			std::vector<std::uint8_t>& buffer);
 		static void serializeControlFrame(const Physics::Timestamp& clientTimestamp,
 			const Physics::Timestamp& serverTimestamp, const Physics::Timestep& timestep,
 			int playerId, const Physics::PlayerInput& playerInput,
 			std::vector<std::uint8_t>& buffer);
-
+		static void serializeStateFrame(const Physics::Timestep& timestep,
+			const std::unordered_map<int, Physics::PlayerInfo>& playerInfos,
+			std::vector<std::uint8_t>& buffer);
+		
+		static void deserializeInitReqFrame(const std::vector<std::uint8_t>& buffer,
+			Physics::Timestamp& clientTimestamp, Common::AirplaneTypeName& airplaneTypeName);
 		static void deserializeInitResFrame(const std::vector<std::uint8_t>& buffer,
 			Physics::Timestamp& clientTimestamp, Physics::Timestamp& serverTimestamp,
 			int& playerId);

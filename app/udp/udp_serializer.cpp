@@ -37,6 +37,19 @@ namespace App
 		buffer.resize(size);
 	}
 
+	void UDPSerializer::serializeInitResFrame(const Physics::Timestamp& clientTimestamp,
+		const Physics::Timestamp& serverTimestamp, int playerId,
+		std::vector<std::uint8_t>& buffer)
+	{
+		InitResFrame frame{};
+		frame.clientTimestamp = packTimestamp(clientTimestamp);
+		frame.serverTimestamp = packTimestamp(serverTimestamp);
+		frame.playerId = static_cast<unsigned char>(playerId);
+
+		std::size_t size = bitsery::quickSerialization<OutputAdapter>(buffer, frame);
+		buffer.resize(size);
+	}
+
 	void UDPSerializer::serializeControlFrame(const Physics::Timestamp& clientTimestamp,
 		const Physics::Timestamp& serverTimestamp, const Physics::Timestep& timestep, int playerId,
 		const Physics::PlayerInput& playerInput, std::vector<std::uint8_t>& buffer)
@@ -54,6 +67,43 @@ namespace App
 
 		std::size_t size = bitsery::quickSerialization<OutputAdapter>(buffer, frame);
 		buffer.resize(size);
+	}
+
+	void UDPSerializer::serializeStateFrame(const Physics::Timestep& timestep,
+		const std::unordered_map<int, Physics::PlayerInfo>& playerInfos,
+		std::vector<std::uint8_t>& buffer)
+	{
+		StateFrame frame{};
+		frame.timestep = packTimestep(timestep);
+		for (const std::pair<const int, Physics::PlayerInfo>& playerInfo : playerInfos)
+		{
+			frame.playerInfos.push_back(
+				StateFramePlayerInfo
+				{
+					static_cast<unsigned char>(playerInfo.first),
+					static_cast<signed char>(playerInfo.second.input.pitch * 100 + 0.5f),
+					static_cast<signed char>(playerInfo.second.input.yaw * 100 + 0.5f),
+					static_cast<signed char>(playerInfo.second.input.roll * 100 + 0.5f),
+					static_cast<unsigned char>(playerInfo.second.input.thrust * 100 + 0.5f),
+					playerInfo.second.input.trigger,
+					toUChar(playerInfo.second.state.airplaneTypeName),
+					static_cast<unsigned char>(playerInfo.second.state.hp),
+					playerInfo.second.state.state.toArray()
+				});
+		}
+
+		std::size_t size = bitsery::quickSerialization<OutputAdapter>(buffer, frame);
+		buffer.resize(size);
+	}
+
+	void UDPSerializer::deserializeInitReqFrame(const std::vector<std::uint8_t>& buffer,
+		Physics::Timestamp& clientTimestamp, Common::AirplaneTypeName& airplaneTypeName)
+	{
+		InitReqFrame frame{};
+		bitsery::quickDeserialization<InputAdapter>({buffer.begin(), buffer.size()}, frame);
+
+		clientTimestamp = unpackTimestamp(frame.clientTimestamp);
+		airplaneTypeName = Common::fromUChar(frame.airplaneType);
 	}
 
 	void UDPSerializer::deserializeInitResFrame(const std::vector<std::uint8_t>& buffer,
