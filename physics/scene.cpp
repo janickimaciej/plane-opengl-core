@@ -74,7 +74,7 @@ namespace Physics
 			{
 				m_airplanes.at(index).setState(playerInfos.at(index).state.state);
 			}
-			else
+			else if (previousScene.m_airplanes.contains(index))
 			{
 				m_airplanes.at(index).update(previousScene.m_airplanes.at(index));
 			}
