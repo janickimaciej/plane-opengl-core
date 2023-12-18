@@ -37,6 +37,27 @@ namespace Physics
 		return airplaneInfos;
 	}
 
+	std::unordered_map<int, PlayerInfo> Scene::getPlayerInfos() const
+	{
+		std::unordered_map<int, PlayerInfo> playerInfos{};
+		for (const std::pair<const int, Airplane>& airplane : m_airplanes)
+		{
+			playerInfos.insert({airplane.first,
+				PlayerInfo
+				{
+					PlayerInput
+					{},
+					PlayerState
+					{
+						100, //tmp
+						airplane.second.getState(),
+						airplane.second.getAirplaneTypeName()
+					}
+				}});
+		}
+		return playerInfos;
+	}
+
 	void Scene::removeAirplanes(const Scene& previousScene,
 		const std::unordered_map<int, bool>& stateLocks)
 	{

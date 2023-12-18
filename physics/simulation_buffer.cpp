@@ -129,13 +129,15 @@ namespace Physics
 	std::unordered_map<int, Physics::PlayerInfo> SimulationBuffer::getPlayerInfos(
 		const Timestep& timestep)
 	{
+		std::unordered_map<int, PlayerInfo> playerInfos =
+			m_buffer[timestep.frame].scene.getPlayerInfos();
+
 		m_buffer[timestep.frame].mutex.lock();
 		
-		std::unordered_map<int, Physics::PlayerInfo> playerInfos{};
 		for (const std::pair<const int, SimulationBufferPlayer>& playerInfo :
 			m_buffer[timestep.frame].players)
 		{
-			playerInfos.insert({playerInfo.first, playerInfo.second.info});
+			playerInfos.at(playerInfo.first).input = playerInfo.second.info.input;
 		}
 
 		m_buffer[timestep.frame].mutex.unlock();

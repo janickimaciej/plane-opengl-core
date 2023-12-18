@@ -16,6 +16,7 @@ namespace Physics
 			const std::unordered_map<int, PlayerInfo>& playerInfos,
 			const std::unordered_map<int, bool>& stateLocks);
 		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos() const;
+		std::unordered_map<int, PlayerInfo> getPlayerInfos() const;
 
 	private:
 		std::unordered_map<int, Airplane> m_airplanes{};
