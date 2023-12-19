@@ -47,25 +47,21 @@ namespace Physics
 		m_buffer[timestep.frame].mutex.unlock();
 	}
 
-	bool SimulationBuffer::writeControlFrame(const Timestep& timestep, int playerId,
+	void SimulationBuffer::writeControlFrame(const Timestep& timestep, int playerId,
 		const PlayerInput& playerInput)
 	{
 		m_buffer[timestep.frame].mutex.lock();
 
 		bool isSecondOdd = timestep.second % 2;
-		bool inputSet = false;
 		if (m_buffer[timestep.frame].players.contains(playerId) && !m_buffer[timestep.frame].lock &&
 			((!isSecondOdd && !m_buffer[timestep.frame].players.at(playerId).lockInput[0]) ||
 			(isSecondOdd && !m_buffer[timestep.frame].players.at(playerId).lockInput[1])))
 		{
 			m_buffer[timestep.frame].players.at(playerId).lockInput[isSecondOdd] = true;
 			m_buffer[timestep.frame].players.at(playerId).info.input = playerInput;
-			inputSet = true;
 		}
 
 		m_buffer[timestep.frame].mutex.unlock();
-
-		return inputSet;
 	}
 
 	void SimulationBuffer::writeStateFrame(const Timestep& timestep,
@@ -78,6 +74,11 @@ namespace Physics
 		m_buffer[timestep.frame].lock = true;
 
 		m_buffer[timestep.frame].mutex.unlock();
+	}
+
+	void SimulationBuffer::writeOwnInput(const Timestep& timestep, const PlayerInput& ownInput)
+	{
+		writeControlFrame(timestep, m_ownId, ownInput);
 	}
 
 	void SimulationBuffer::update(const Timestep& timestep)
