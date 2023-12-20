@@ -21,7 +21,6 @@ namespace Physics
 		friend Timestamp operator*(float number, const Timestamp& timestamp);
 		friend Timestamp operator/(const Timestamp& timestamp, float number);
 
-	private:
 		static void normalize(int& second, int& millisecond);
 	};
 };

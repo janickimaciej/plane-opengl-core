@@ -41,9 +41,26 @@ namespace Physics
 		const Timestamp& receiveTimestamp, const Timestamp& serverTimestamp)
 	{
 		constexpr float newOffsetWeight = 0.02f;
-		constexpr float oldOffsetWeight = 1 - newOffsetWeight;
-		m_offset = oldOffsetWeight * m_offset.load() + newOffsetWeight *
-			calculateOffset(sendTimestamp, receiveTimestamp, serverTimestamp);
+		Timestamp difference =
+			calculateOffset(sendTimestamp, receiveTimestamp, serverTimestamp) - m_offset;
+		int differenceMillisecond =
+			static_cast<int>(difference.second * millisecondsPerSecond + difference.millisecond);
+		if (difference.second >= secondsPerMinute / 2)
+		{
+			differenceMillisecond -= secondsPerMinute * millisecondsPerSecond;
+		}
+		differenceMillisecond = static_cast<int>(differenceMillisecond * newOffsetWeight);
+		int differenceSecond = differenceMillisecond / static_cast<int>(millisecondsPerSecond);
+		differenceMillisecond -= differenceSecond * static_cast<int>(millisecondsPerSecond);
+
+		int offsetSecond = static_cast<int>(m_offset.load().second) + differenceSecond;
+		int offsetMillisecond =
+			static_cast<int>(m_offset.load().millisecond) + differenceMillisecond;
+
+		Timestamp::normalize(offsetSecond, offsetMillisecond);
+
+		m_offset = Timestamp{static_cast<unsigned int>(offsetSecond),
+			static_cast<unsigned int>(offsetMillisecond)};
 	}
 
 	Timestamp SimulationClock::calculateOffset(const Timestamp& sendTimestamp,
