@@ -26,8 +26,9 @@ namespace Physics
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
 		void writeOwnInput(const Timestep& timestep, const PlayerInput& ownInput);
 		void update(const Timestep& timestep);
-		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(const Timestep& timestep);
-		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep);
+		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(
+			const Timestep& timestep) const;
+		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep) const;
 
 	private:
 		std::array<SimulationBufferElement, simulationBufferSize> m_buffer{};

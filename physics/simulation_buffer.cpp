@@ -115,7 +115,7 @@ namespace Physics
 	}
 
 	std::unordered_map<int, Common::AirplaneInfo> SimulationBuffer::getAirplaneInfos(
-		const Timestep& timestep)
+		const Timestep& timestep) const
 	{
 		m_buffer[timestep.frame].mutex.lock();
 
@@ -128,7 +128,7 @@ namespace Physics
 	}
 
 	std::unordered_map<int, Physics::PlayerInfo> SimulationBuffer::getPlayerInfos(
-		const Timestep& timestep)
+		const Timestep& timestep) const
 	{
 		std::unordered_map<int, PlayerInfo> playerInfos =
 			m_buffer[timestep.frame].scene.getPlayerInfos();

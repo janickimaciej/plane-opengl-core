@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 namespace Common
 {
 	inline constexpr int airplaneTypeCount = 1;

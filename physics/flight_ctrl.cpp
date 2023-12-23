@@ -1,6 +1,6 @@
 #include "flight_ctrl.hpp"
 
-//#include "graphics/submodel.hpp"
+//#include "graphics/submodels/submodel.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
 #include "physics/airplane_params/surface_params.hpp"
 

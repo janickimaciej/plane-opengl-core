@@ -11,7 +11,7 @@ namespace Physics
 	struct SimulationBufferElement
 	{
 		Scene scene{};
-		std::mutex mutex{};
+		mutable std::mutex mutex{};
 		std::unordered_map<int, SimulationBufferPlayer> players{};
 		bool lock{};
 	};
