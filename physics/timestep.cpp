@@ -1,5 +1,7 @@
 #include "physics/timestep.hpp"
 
+#include "common/config.hpp"
+
 namespace Physics
 {
 	Timestep Timestep::previous() const
@@ -7,7 +9,7 @@ namespace Physics
 		Timestep previousTimestep{};
 		if (frame == 0)
 		{
-			previousTimestep.frame = framesPerSecond - 1;
+			previousTimestep.frame = Common::framesPerSecond - 1;
 			if (second == 0)
 			{
 				previousTimestep.second = secondsPerMinute - 1;
@@ -28,7 +30,7 @@ namespace Physics
 	Timestep Timestep::next() const
 	{
 		Timestep nextTimestep{};
-		if (frame == framesPerSecond - 1)
+		if (frame == Common::framesPerSecond - 1)
 		{
 			nextTimestep.frame = 0;
 			if (second == secondsPerMinute - 1)
@@ -81,7 +83,7 @@ namespace Physics
 	{
 		while (frame < 0)
 		{
-			frame += framesPerSecond;
+			frame += Common::framesPerSecond;
 			--second;
 		}
 
@@ -90,9 +92,9 @@ namespace Physics
 			second += secondsPerMinute;
 		}
 
-		while (frame >= framesPerSecond)
+		while (frame >= Common::framesPerSecond)
 		{
-			frame -= framesPerSecond;
+			frame -= Common::framesPerSecond;
 			++second;
 		}
 

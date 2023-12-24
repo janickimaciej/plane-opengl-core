@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/config.hpp"
 #include "physics/timestamp.hpp"
 #include "physics/timestep.hpp"
 
@@ -8,7 +9,7 @@
 
 namespace Physics
 {
-	inline constexpr float physicsTimeStep = 1.0f / framesPerSecond;
+	inline constexpr float physicsTimeStep = 1.0f / Common::framesPerSecond;
 
 	class SimulationClock
 	{

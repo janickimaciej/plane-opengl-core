@@ -1,8 +1,9 @@
 #pragma once
 
+#include "common/config.hpp"
+
 namespace Physics
 {
-	constexpr unsigned int framesPerSecond = 100;
 	constexpr unsigned int millisecondsPerSecond = 1000;
 	constexpr unsigned int secondsPerMinute = 60;
 

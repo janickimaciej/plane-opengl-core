@@ -2,6 +2,7 @@
 
 #include "app/udp/frame/state_frame_player_info.hpp"
 #include "app/udp/udp_frame_type.hpp"
+#include "common/config.hpp"
 
 #include <bitsery/traits/array.h>
 #include <bitsery/traits/vector.h>
@@ -11,7 +12,6 @@
 
 namespace App
 {
-	inline constexpr std::size_t maxPlayerCount = 32;
 	inline constexpr std::size_t vectorSerializedSize = 4; // with margin
 	inline constexpr std::size_t emptyStateFrameSerializedSize = 3 + vectorSerializedSize;
 
@@ -27,6 +27,6 @@ namespace App
 	{
 		t.value1b(frame.frameType);
 		t.container1b(frame.timestep);
-		t.container(frame.playerInfos, maxPlayerCount);
+		t.container(frame.playerInfos, Common::maxPlayerCount);
 	}
 };

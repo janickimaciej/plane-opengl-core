@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/airplane_info.hpp"
+#include "common/config.hpp"
 #include "physics/player_info.hpp"
 #include "physics/player_input.hpp"
 #include "physics/simulation_buffer_element.hpp"
@@ -15,7 +16,7 @@ namespace Physics
 	class SimulationBuffer
 	{
 	public:
-		static constexpr int simulationBufferSize = framesPerSecond;
+		static constexpr int simulationBufferSize = Common::framesPerSecond;
 
 		SimulationBuffer(int ownId);
 		

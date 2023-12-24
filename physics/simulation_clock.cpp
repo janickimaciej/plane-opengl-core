@@ -1,5 +1,6 @@
 #include "physics/simulation_clock.hpp"
 
+#include "common/config.hpp"
 #include "physics/timestamp.hpp"
 #include "physics/timestep.hpp"
 
@@ -22,7 +23,7 @@ namespace Physics
 			std::chrono::duration_cast<std::chrono::milliseconds>(simulationTime - minutes -
 				seconds);
 
-		static constexpr float framesPerMillisecond = static_cast<float>(framesPerSecond) /
+		static constexpr float framesPerMillisecond = static_cast<float>(Common::framesPerSecond) /
 			millisecondsPerSecond;
 		return Timestep
 			{

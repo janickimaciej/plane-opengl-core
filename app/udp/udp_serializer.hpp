@@ -2,6 +2,7 @@
 
 #include "app/udp/frame/state_frame.hpp"
 #include "common/airplane_type_name.hpp"
+#include "common/config.hpp"
 #include "physics/player_info.hpp"
 #include "physics/player_input.hpp"
 #include "physics/timestamp.hpp"
@@ -14,8 +15,8 @@
 
 namespace App
 {
-	inline constexpr std::size_t maxFrameSize = emptyStateFrameSerializedSize + maxPlayerCount *
-		stateFramePlayerInfoSerializedSize;
+	inline constexpr std::size_t maxFrameSize = emptyStateFrameSerializedSize +
+		Common::maxPlayerCount * stateFramePlayerInfoSerializedSize;
 
 	class UDPSerializer
 	{
