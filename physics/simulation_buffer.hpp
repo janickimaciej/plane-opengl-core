@@ -10,6 +10,7 @@
 
 #include <array>
 #include <unordered_map>
+#include <vector>
 
 namespace Physics
 {
@@ -26,6 +27,8 @@ namespace Physics
 		void writeStateFrame(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
 		void writeOwnInput(const Timestep& timestep, const PlayerInput& ownInput);
+		void removeInactivePlayers(const std::vector<int>& removedPlayers,
+			const Physics::Timestep& timestep);
 		void update(const Timestep& timestep);
 		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(
 			const Timestep& timestep) const;

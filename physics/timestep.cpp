@@ -59,6 +59,15 @@ namespace Physics
 		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(frame)};
 	}
 
+	Timestep operator+(const Timestep& timestep1, const Timestep& timestep2)
+	{
+		int second = static_cast<int>(timestep1.second) + static_cast<int>(timestep2.second);
+		int frame = static_cast<int>(timestep1.frame) +
+			static_cast<int>(timestep2.frame);
+		Timestep::normalize(second, frame);
+		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(frame)};
+	}
+
 	bool operator==(const Timestep& timestep1, const Timestep& timestep2)
 	{
 		return timestep1.second == timestep2.second && timestep1.frame == timestep2.frame;

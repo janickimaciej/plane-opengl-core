@@ -16,6 +16,7 @@ namespace Physics
 		Timestep next() const;
 		
 		friend Timestep operator-(const Timestep& timestep1, const Timestep& timestep2);
+		friend Timestep operator+(const Timestep& timestep1, const Timestep& timestep2);
 
 		friend bool operator==(const Timestep& timestep1, const Timestep& timestep2);
 		friend bool operator<(const Timestep& timestep1, const Timestep& timestep2);

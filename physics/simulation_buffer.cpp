@@ -68,9 +68,9 @@ namespace Physics
 		const std::unordered_map<int, PlayerInfo>& playerInfos)
 	{
 		m_buffer[timestep.frame].mutex.lock();
-
-		removePlayers(timestep, playerInfos);
+		
 		addAndUpdatePlayers(timestep, playerInfos);
+		removePlayers(timestep, playerInfos);
 		m_buffer[timestep.frame].lock = true;
 
 		m_buffer[timestep.frame].mutex.unlock();
@@ -79,6 +79,17 @@ namespace Physics
 	void SimulationBuffer::writeOwnInput(const Timestep& timestep, const PlayerInput& ownInput)
 	{
 		writeControlFrame(timestep, m_ownId, ownInput);
+	}
+
+	void SimulationBuffer::removeInactivePlayers(const std::vector<int>& removedPlayers,
+		const Physics::Timestep& timestep)
+	{
+		m_buffer[timestep.frame].mutex.lock();
+		
+		bool isSecondOdd = timestep.second % 2;
+		m_buffer[timestep.frame].removedPlayers[isSecondOdd] = removedPlayers;
+
+		m_buffer[timestep.frame].mutex.unlock();
 	}
 
 	void SimulationBuffer::update(const Timestep& timestep)
@@ -90,8 +101,8 @@ namespace Physics
 		
 		if (!m_buffer[timestep.frame].lock)
 		{
-			removePlayers(previousTimestep, timestep);
 			addAndUpdatePlayers(previousTimestep, timestep);
+			removePlayers(previousTimestep, timestep);
 		}
 
 		bool isSecondOdd = timestep.second % 2;
@@ -197,8 +208,14 @@ namespace Physics
 	void SimulationBuffer::removePlayers(const Timestep& previousTimestep,
 		const Timestep& timestep)
 	{
-		std::vector<int> keysToBeDeleted;
 		bool isSecondOdd = timestep.second % 2;
+
+		for (int player : m_buffer[timestep.frame].removedPlayers[isSecondOdd])
+		{
+			m_buffer[timestep.frame].players.erase(player);
+		}
+		
+		std::vector<int> keysToBeDeleted;
 		for (std::pair<const int, SimulationBufferPlayer>& player :
 			m_buffer[timestep.frame].players)
 		{
@@ -259,6 +276,7 @@ namespace Physics
 		m_buffer[timestep.frame].lock = false;
 
 		bool isSecondOdd = timestep.second % 2;
+		m_buffer[timestep.frame].removedPlayers[!isSecondOdd].clear();
 		for (std::pair<const int, SimulationBufferPlayer>& player :
 			m_buffer[timestep.frame].players)
 		{
