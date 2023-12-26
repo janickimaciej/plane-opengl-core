@@ -256,7 +256,12 @@ namespace Physics
 						PlayerInfo
 						{
 							previousTimestepPlayer.second.info.input,
-							PlayerState{}
+							PlayerState
+							{
+								100, //tmp
+								Common::State{},
+								previousTimestepPlayer.second.info.state.airplaneTypeName
+							}
 						}
 					}});
 			}
