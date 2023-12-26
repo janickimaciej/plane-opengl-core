@@ -2,11 +2,12 @@
 
 namespace Common
 {
-	inline constexpr int airplaneTypeCount = 1;
+	inline constexpr int airplaneTypeCount = 2;
 
 	enum class AirplaneTypeName
 	{
-		mustang
+		mustang,
+		jw1
 	};
 
 	unsigned char toUChar(AirplaneTypeName airplaneTypeName);

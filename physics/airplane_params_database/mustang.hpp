@@ -10,7 +10,7 @@
 
 namespace Physics
 {
-	namespace
+	namespace database::mustang
 	{
 		inline constexpr float mass = 4000;
 		inline constexpr glm::mat3 momentOfInertia
@@ -78,26 +78,37 @@ namespace Physics
 
 	inline const AirplaneParams mustangParams
 	{
-		mass, momentOfInertia, centerOfMass,
+		database::mustang::mass, database::mustang::momentOfInertia,
+		database::mustang::centerOfMass,
 
-		hStabIncidenceAngleDeg, hStabArea, hStabLiftCoefConst, hStabLiftCoefDeriv,
-		hStabNormalForceCoef, hStabCriticalAngleNegativeDeg, hStabCriticalAnglePositiveDeg,
-		hStabLiftPoint, hStabNormalForcePoint, elevatorArea, elevatorLiftCoefDeriv,
-		elevatorMinAngleDeg, elevatorMaxAngleDeg, elevatorForcePoint,
+		database::mustang::hStabIncidenceAngleDeg, database::mustang::hStabArea,
+		database::mustang::hStabLiftCoefConst, database::mustang::hStabLiftCoefDeriv,
+		database::mustang::hStabNormalForceCoef, database::mustang::hStabCriticalAngleNegativeDeg,
+		database::mustang::hStabCriticalAnglePositiveDeg, database::mustang::hStabLiftPoint,
+		database::mustang::hStabNormalForcePoint, database::mustang::elevatorArea,
+		database::mustang::elevatorLiftCoefDeriv, database::mustang::elevatorMinAngleDeg,
+		database::mustang::elevatorMaxAngleDeg, database::mustang::elevatorForcePoint,
 
-		vStabIncidenceAngleDeg, vStabArea, vStabLiftCoefConst, vStabLiftCoefDeriv,
-		vStabNormalForceCoef, vStabCriticalAngleNegativeDeg, vStabCriticalAnglePositiveDeg,
-		vStabLiftPoint, vStabNormalForcePoint, rudderArea, rudderLiftCoefDeriv, rudderMaxAngleDeg,
-		rudderForcePoint,
+		database::mustang::vStabIncidenceAngleDeg, database::mustang::vStabArea,
+		database::mustang::vStabLiftCoefConst, database::mustang::vStabLiftCoefDeriv,
+		database::mustang::vStabNormalForceCoef, database::mustang::vStabCriticalAngleNegativeDeg,
+		database::mustang::vStabCriticalAnglePositiveDeg, database::mustang::vStabLiftPoint,
+		database::mustang::vStabNormalForcePoint, database::mustang::rudderArea,
+		database::mustang::rudderLiftCoefDeriv, database::mustang::rudderMaxAngleDeg,
+		database::mustang::rudderForcePoint,
 
-		wingsIncidenceAngleDeg, wingsArea, wingsLiftCoefConst, wingsLiftCoefDeriv,
-		wingsNormalForceCoef, wingsCriticalAngleNegativeDeg, wingsCriticalAnglePositiveDeg,
-		rightWingLiftPoint, rightWingNormalForcePoint, aileronsArea, aileronsLiftCoefDeriv,
-		aileronsMaxAngleDeg, rightAileronForcePoint,
+		database::mustang::wingsIncidenceAngleDeg, database::mustang::wingsArea,
+		database::mustang::wingsLiftCoefConst, database::mustang::wingsLiftCoefDeriv,
+		database::mustang::wingsNormalForceCoef, database::mustang::wingsCriticalAngleNegativeDeg,
+		database::mustang::wingsCriticalAnglePositiveDeg, database::mustang::rightWingLiftPoint,
+		database::mustang::rightWingNormalForcePoint, database::mustang::aileronsArea,
+		database::mustang::aileronsLiftCoefDeriv, database::mustang::aileronsMaxAngleDeg,
+		database::mustang::rightAileronForcePoint,
 
-		fuselageFrontArea, fuselageFrontDragCoef, fuselageFrontDragPoint, fuselageSideArea,
-		fuselageSideDragCoef, fuselageSideDragPoint,
+		database::mustang::fuselageFrontArea, database::mustang::fuselageFrontDragCoef,
+		database::mustang::fuselageFrontDragPoint, database::mustang::fuselageSideArea,
+		database::mustang::fuselageSideDragCoef, database::mustang::fuselageSideDragPoint,
 
-		maxThrust, thrustPoint
+		database::mustang::maxThrust, database::mustang::thrustPoint
 	};
 };
