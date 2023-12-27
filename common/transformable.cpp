@@ -19,9 +19,9 @@ namespace Common
 		updateMatrix();
 	}
 
-	void Transformable::rotate(const glm::vec3& axis, float angleDeg)
+	void Transformable::rotate(const glm::vec3& axis, float angleRad)
 	{
-		glm::quat rotation = glm::angleAxis(glm::radians(angleDeg), axis);
+		glm::quat rotation = glm::angleAxis(angleRad, axis);
 		m_state.orientation = rotation * m_state.orientation;
 		m_state.normalize();
 		updateMatrix();
@@ -39,19 +39,19 @@ namespace Common
 		updateMatrix();
 	}
 
-	void Transformable::rotatePitch(float angleDeg)
+	void Transformable::rotatePitch(float angleRad)
 	{
-		rotate(m_state.right(), angleDeg);
+		rotate(m_state.right(), angleRad);
 	}
 
-	void Transformable::rotateYaw(float angleDeg)
+	void Transformable::rotateYaw(float angleRad)
 	{
-		rotate(m_state.up(), -angleDeg);
+		rotate(m_state.up(), -angleRad);
 	}
 
-	void Transformable::rotateRoll(float angleDeg)
+	void Transformable::rotateRoll(float angleRad)
 	{
-		rotate(m_state.direction(), -angleDeg);
+		rotate(m_state.direction(), -angleRad);
 	}
 
 	void Transformable::moveZ(float distance)
@@ -75,10 +75,33 @@ namespace Common
 		updateMatrix();
 	}
 
+	void Transformable::mirrorX()
+	{
+		m_mirrorX = !m_mirrorX;
+		updateMatrix();
+	}
+
+	void Transformable::mirrorY()
+	{
+		m_mirrorY = !m_mirrorY;
+		updateMatrix();
+	}
+
+	void Transformable::mirrorZ()
+	{
+		m_mirrorZ = !m_mirrorZ;
+		updateMatrix();
+	}
+
 	void Transformable::updateMatrix()
 	{
-		glm::mat4 scaleMatrix = glm::scale(glm::mat4{1}, glm::vec3{m_scaleRatio, m_scaleRatio,
-			m_scaleRatio});
+		glm::mat4 scaleMatrix = glm::scale(glm::mat4{1},
+			glm::vec3
+			{
+				m_mirrorX ? -m_scaleRatio : m_scaleRatio,
+				m_mirrorY ? -m_scaleRatio : m_scaleRatio,
+				m_mirrorZ ? -m_scaleRatio : m_scaleRatio
+			});
 		m_matrix = m_state.matrix() * scaleMatrix;
 	}
 };

@@ -1,6 +1,6 @@
 #include "scene.hpp"
 
-#include "physics/airplane_params_database.hpp"
+#include "physics/airplane_params_database/airplane_params_database.hpp"
 #include "physics/models/airplane.hpp"
 #include "physics/player_info.hpp"
 
@@ -90,7 +90,7 @@ namespace Physics
 					Airplane{playerInfos.at(stateLock.first).state.airplaneTypeName}});
 			}
 			
-			m_airplanes.at(index).setCtrl(playerInfos.at(index).input);
+			m_airplanes.at(index).setPlayerInput(playerInfos.at(index).input);
 			if (stateLocks.at(index))
 			{
 				m_airplanes.at(index).setState(playerInfos.at(index).state.state);

@@ -1,7 +1,7 @@
 #include "physics/models/airplane.hpp"
 
 #include "physics/airplane_params/airplane_params.hpp"
-#include "physics/airplane_params_database.hpp"
+#include "physics/airplane_params_database/airplane_params_database.hpp"
 #include "physics/flight_ctrl.hpp"
 #include "physics/model_dynamics/airplane_dynamics.hpp"
 #include "physics/models/model.hpp"
@@ -37,6 +37,7 @@ namespace Physics
 
 	void Airplane::update(const Airplane& previousAirplane)
 	{
+		m_flightCtrl.update(previousAirplane.m_flightCtrl);
 		setState(m_dynamics.computeNewState(previousAirplane.getState()));
 	}
 
@@ -50,12 +51,8 @@ namespace Physics
 		return m_flightCtrl.getCtrl();
 	}
 
-	void Airplane::setCtrl(const PlayerInput& input)
+	void Airplane::setPlayerInput(const PlayerInput& input)
 	{
-		m_flightCtrl.ctrlPitch(input.pitch);
-		m_flightCtrl.ctrlYaw(input.yaw);
-		m_flightCtrl.ctrlRoll(input.roll);
-		m_flightCtrl.ctrlThrust(input.thrust);
-		// TODO: ctrlTrigger
+		m_flightCtrl.setPlayerInput(input);
 	}
 };

@@ -1,18 +1,24 @@
 #include "flight_ctrl.hpp"
 
-//#include "graphics/submodels/submodel.hpp"
+#include "common/config.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
 #include "physics/airplane_params/surface_params.hpp"
+
+#include <algorithm>
 
 namespace Physics
 {
 	FlightCtrl::FlightCtrl(const AirplaneParams& airplaneParams) :
 		m_airplaneParams{airplaneParams}
+	{ }
+
+	void FlightCtrl::update(const FlightCtrl& previousAirplaneFlightCtrl)
 	{
-		ctrlPitch(0);
-		ctrlYaw(0);
-		ctrlRoll(0);
-		ctrlThrust(0);
+		updateElevator(previousAirplaneFlightCtrl.m_airplaneCtrl.elevatorAngleRad);
+		updateRudder(previousAirplaneFlightCtrl.m_airplaneCtrl.rudderAngleRad);
+		updateAilerons(previousAirplaneFlightCtrl.m_airplaneCtrl.aileronsAngleRad);
+		updateThrust(previousAirplaneFlightCtrl.m_airplaneCtrl.thrustRelative);
+		updateGunfire();
 	}
 
 	float FlightCtrl::getElevatorAngleRad() const
@@ -20,21 +26,9 @@ namespace Physics
 		return m_airplaneCtrl.elevatorAngleRad;
 	}
 
-	void FlightCtrl::ctrlPitch(float relative)
-	{
-		m_airplaneCtrl.elevatorAngleRad = relativeToAbs(relative,
-			m_airplaneParams.hStab.ctrlMinAngleRad, m_airplaneParams.hStab.ctrlMaxAngleRad);
-	}
-
 	float FlightCtrl::getRudderAngleRad() const
 	{
 		return m_airplaneCtrl.rudderAngleRad;
-	}
-
-	void FlightCtrl::ctrlYaw(float relative)
-	{
-		m_airplaneCtrl.rudderAngleRad = relativeToAbs(relative,
-			m_airplaneParams.vStab.ctrlMinAngleRad, m_airplaneParams.vStab.ctrlMaxAngleRad);
 	}
 
 	float FlightCtrl::getAileronsAngleRad() const
@@ -42,25 +36,66 @@ namespace Physics
 		return m_airplaneCtrl.aileronsAngleRad;
 	}
 
-	void FlightCtrl::ctrlRoll(float relative)
-	{
-		m_airplaneCtrl.aileronsAngleRad = relativeToAbs(relative,
-			m_airplaneParams.rightWing.ctrlMinAngleRad, m_airplaneParams.rightWing.ctrlMaxAngleRad);
-	}
-
 	float FlightCtrl::getThrustRelative() const
 	{
 		return m_airplaneCtrl.thrustRelative;
 	}
 
-	void FlightCtrl::ctrlThrust(float relative)
-	{
-		m_airplaneCtrl.thrustRelative = relative;
-	}
-
 	Common::AirplaneCtrl FlightCtrl::getCtrl() const
 	{
 		return m_airplaneCtrl;
+	}
+
+	void FlightCtrl::setPlayerInput(const PlayerInput& playerInput)
+	{
+		m_playerInput = playerInput;
+	}
+
+	void FlightCtrl::updateElevator(float previousElevatorAngleRad)
+	{
+		constexpr float angVelocityRad = glm::radians(120.0f);
+		constexpr float maxChange = angVelocityRad / Common::framesPerSecond;
+		float diff = relativeToAbs(m_playerInput.pitch,
+			m_airplaneParams.hStab.criticalAngleNegativeRad,
+			m_airplaneParams.hStab.criticalAnglePositiveRad) - previousElevatorAngleRad;
+		float change = std::clamp(diff, -maxChange, maxChange);
+		m_airplaneCtrl.elevatorAngleRad = previousElevatorAngleRad + change;
+	}
+
+	void FlightCtrl::updateRudder(float previousRudderAngleRad)
+	{
+		constexpr float angVelocityRad = glm::radians(120.0f);
+		constexpr float maxChange = angVelocityRad / Common::framesPerSecond;
+		float diff = relativeToAbs(m_playerInput.yaw,
+			m_airplaneParams.hStab.criticalAngleNegativeRad,
+			m_airplaneParams.hStab.criticalAnglePositiveRad) - previousRudderAngleRad;
+		float change = std::clamp(diff, -maxChange, maxChange);
+		m_airplaneCtrl.rudderAngleRad = previousRudderAngleRad + change;
+	}
+
+	void FlightCtrl::updateAilerons(float previousAileronsAngleRad)
+	{
+		constexpr float angVelocityRad = glm::radians(120.0f);
+		constexpr float maxChange = angVelocityRad / Common::framesPerSecond;
+		float diff = relativeToAbs(m_playerInput.roll,
+			m_airplaneParams.hStab.criticalAngleNegativeRad,
+			m_airplaneParams.hStab.criticalAnglePositiveRad) - previousAileronsAngleRad;
+		float change = std::clamp(diff, -maxChange, maxChange);
+		m_airplaneCtrl.aileronsAngleRad = previousAileronsAngleRad + change;
+	}
+
+	void FlightCtrl::updateThrust(float previousThrustRelative)
+	{
+		constexpr float velocity = 1;
+		constexpr float maxChange = velocity / Common::framesPerSecond;
+		float diff = m_playerInput.thrust - previousThrustRelative;
+		float change = std::clamp(diff, -maxChange, maxChange);
+		m_airplaneCtrl.thrustRelative = previousThrustRelative + change;
+	}
+
+	void FlightCtrl::updateGunfire()
+	{
+		m_airplaneCtrl.gunfire = m_playerInput.trigger;
 	}
 
 	float FlightCtrl::relativeToAbs(float relative, float min, float max)

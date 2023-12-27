@@ -2,6 +2,7 @@
 
 #include "common/airplane_ctrl.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
+#include "physics/player_input.hpp"
 
 namespace Physics
 {
@@ -9,20 +10,24 @@ namespace Physics
 	{
 	public:
 		FlightCtrl(const AirplaneParams& airplaneParams);
+		void update(const FlightCtrl& previousAirplaneFlightCtrl);
 		float getElevatorAngleRad() const;
-		void ctrlPitch(float relative);
 		float getRudderAngleRad() const;
-		void ctrlYaw(float relative);
 		float getAileronsAngleRad() const;
-		void ctrlRoll(float relative);
 		float getThrustRelative() const;
-		void ctrlThrust(float relative);
+		void setPlayerInput(const PlayerInput& playerInput);
 		Common::AirplaneCtrl getCtrl() const;
 	
 	private:
 		const AirplaneParams& m_airplaneParams;
-		Common::AirplaneCtrl m_airplaneCtrl;
-
+		PlayerInput m_playerInput{};
+		Common::AirplaneCtrl m_airplaneCtrl{};
+		
+		void updateElevator(float previousElevatorAngleRad);
+		void updateRudder(float previousRudderAngleRad);
+		void updateAilerons(float previousAileronsAngleRad);
+		void updateThrust(float previousThrustRelative);
+		void updateGunfire();
 		// converts linearly from [-1, 1] to [min, max]
 		static float relativeToAbs(float relative, float min, float max);
 	};

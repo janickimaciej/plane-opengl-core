@@ -21,7 +21,7 @@ namespace Physics
 		void update(const Airplane& previousAirplane);
 		Common::AirplaneTypeName getAirplaneTypeName() const;
 		Common::AirplaneCtrl getCtrl() const;
-		void setCtrl(const PlayerInput& input);
+		void setPlayerInput(const PlayerInput& input);
 		virtual ~Airplane() = default;
 
 	private:
