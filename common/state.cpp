@@ -69,6 +69,31 @@ namespace Common
 		return orientation * glm::vec3{0, 0, 1};
 	}
 
+	void State::setOrientation(const glm::vec3& direction)
+	{
+		glm::vec3 right = glm::normalize(glm::cross
+		(
+			glm::vec3{0, 1, 0},
+			glm::vec3{direction}
+		));
+
+		glm::vec3 up = glm::normalize(glm::cross
+		(
+			glm::vec3{direction},
+			glm::vec3{right}
+		));
+
+		// constructor takes arguments column-wise
+		glm::mat3 orientationMatrix =
+		{
+			right.x, right.y, right.z,
+			up.x, up.y, up.z,
+			direction.x, direction.y, direction.z
+		};
+
+		orientation = glm::quat_cast(orientationMatrix);
+	}
+
 	void State::normalize()
 	{
 		orientation = glm::normalize(orientation);

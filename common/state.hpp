@@ -26,6 +26,7 @@ namespace Common
 		glm::vec3 right() const;
 		glm::vec3 up() const;
 		glm::vec3 direction() const;
+		void setOrientation(const glm::vec3& direction); // direction must be a unit vector
 		void normalize();
 	};
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/airplane_info.hpp"
 #include "common/config.hpp"
+#include "common/scene_info.hpp"
 #include "physics/player_info.hpp"
 #include "physics/player_input.hpp"
 #include "physics/simulation_buffer_element.hpp"
@@ -30,8 +30,7 @@ namespace Physics
 		void removeInactivePlayers(const std::vector<int>& removedPlayers,
 			const Physics::Timestep& timestep);
 		void update(const Timestep& timestep);
-		std::unordered_map<int, Common::AirplaneInfo> getAirplaneInfos(
-			const Timestep& timestep) const;
+		Common::SceneInfo getSceneInfo(const Timestep& timestep) const;
 		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep) const;
 
 	private:
