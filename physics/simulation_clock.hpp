@@ -9,7 +9,7 @@
 
 namespace Physics
 {
-	inline constexpr float physicsTimeStep = 1.0f / Common::framesPerSecond;
+	inline constexpr float physicsTimeStep = 1.0f / Common::stepsPerSecond;
 
 	class SimulationClock
 	{

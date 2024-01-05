@@ -15,13 +15,15 @@ namespace Physics
 	class Airplane : public Model
 	{
 	public:
-		Airplane(const Common::AirplaneTypeName& airplaneTypeName);
+		Airplane(const Common::AirplaneTypeName& airplaneTypeName, int hp);
 		Airplane(const Airplane& airplane);
 		Airplane(Airplane&& airplane) noexcept;
 		void update(const Airplane& previousAirplane);
 		Common::AirplaneTypeName getAirplaneTypeName() const;
-		Common::AirplaneCtrl getCtrl() const;
+		PlayerInput getPlayerInput() const;
 		void setPlayerInput(const PlayerInput& input);
+		Common::AirplaneCtrl getCtrl() const;
+		int getHP() const;
 		virtual ~Airplane() = default;
 
 	private:
@@ -29,5 +31,6 @@ namespace Physics
 		const AirplaneParams& m_airplaneParams;
 		FlightCtrl m_flightCtrl;
 		AirplaneDynamics m_dynamics;
+		int m_hp{};
 	};
 };

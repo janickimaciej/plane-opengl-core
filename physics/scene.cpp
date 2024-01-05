@@ -1,12 +1,12 @@
 #include "scene.hpp"
 
-#include "common/airplane_center_of_mass_database.hpp"
+#include "common/airplane_centers_of_mass.hpp"
 #include "common/airplane_info.hpp"
 #include "common/airplane_type_name.hpp"
 #include "common/bullet_info.hpp"
 #include "common/config.hpp"
 #include "common/scene_info.hpp"
-#include "physics/airplane_params_database/airplane_params_database.hpp"
+#include "physics/airplane_definitions.hpp"
 #include "physics/models/airplane.hpp"
 #include "physics/player_info.hpp"
 #include "physics/timestep.hpp"
@@ -22,8 +22,8 @@ namespace Physics
 		const std::unordered_map<int, PlayerInfo>& playerInfos,
 		const std::unordered_map<int, bool>& stateLocks)
 	{
-		removeAirplanes(previousScene, stateLocks);
 		addAndUpdateAirplanes(previousScene, playerInfos, stateLocks);
+		removeAirplanes(previousScene, stateLocks);
 		updateBullets(timestep, previousScene);
 		detectCollisions();
 		m_dayNightCycle.updateTime(previousScene.m_dayNightCycle);
@@ -62,17 +62,48 @@ namespace Physics
 			playerInfos.insert({airplane.first,
 				PlayerInfo
 				{
-					PlayerInput
-					{},
+					airplane.second.getPlayerInput(),
 					PlayerState
 					{
-						100, //tmp
+						airplane.second.getHP(),
 						airplane.second.getState(),
 						airplane.second.getAirplaneTypeName()
 					}
 				}});
 		}
 		return playerInfos;
+	}
+
+	void Scene::addAndUpdateAirplanes(const Scene& previousScene,
+		const std::unordered_map<int, PlayerInfo>& playerInfos,
+		const std::unordered_map<int, bool>& stateLocks)
+	{
+		for (const std::pair<const int, bool>& stateLock : stateLocks)
+		{
+			int index = stateLock.first;
+			if (!m_airplanes.contains(index))
+			{
+				Common::AirplaneTypeName airplaneTypeName =
+					playerInfos.at(stateLock.first).state.airplaneTypeName;
+				m_airplanes.insert({index,
+					Airplane
+					{
+						airplaneTypeName,
+						airplaneDefinitions[toSizeT(airplaneTypeName)].initialHP
+					}});
+				m_bullets.insert({index, std::list<Bullet>{}});
+			}
+			
+			m_airplanes.at(index).setPlayerInput(playerInfos.at(index).input);
+			if (stateLocks.at(index))
+			{
+				m_airplanes.at(index).setState(playerInfos.at(index).state.state);
+			}
+			else if (previousScene.m_airplanes.contains(index))
+			{
+				m_airplanes.at(index).update(previousScene.m_airplanes.at(index));
+			}
+		}
 	}
 
 	void Scene::removeAirplanes(const Scene& previousScene,
@@ -92,32 +123,6 @@ namespace Physics
 		{
 			m_airplanes.erase(key);
 			m_bullets.erase(key);
-		}
-	}
-
-	void Scene::addAndUpdateAirplanes(const Scene& previousScene,
-		const std::unordered_map<int, PlayerInfo>& playerInfos,
-		const std::unordered_map<int, bool>& stateLocks)
-	{
-		for (const std::pair<const int, bool>& stateLock : stateLocks)
-		{
-			int index = stateLock.first;
-			if (!m_airplanes.contains(index))
-			{
-				m_airplanes.insert({index,
-					Airplane{playerInfos.at(stateLock.first).state.airplaneTypeName}});
-				m_bullets.insert({index, std::list<Bullet>{}});
-			}
-			
-			m_airplanes.at(index).setPlayerInput(playerInfos.at(index).input);
-			if (stateLocks.at(index))
-			{
-				m_airplanes.at(index).setState(playerInfos.at(index).state.state);
-			}
-			else if (previousScene.m_airplanes.contains(index))
-			{
-				m_airplanes.at(index).update(previousScene.m_airplanes.at(index));
-			}
 		}
 	}
 
@@ -143,34 +148,24 @@ namespace Physics
 				bullet.update(bullet);
 			}
 
-			static constexpr Timestep bulletCooldown{0, Common::framesPerSecond / 2};
+			static constexpr Timestep bulletCooldown{0, Common::stepsPerSecond / 2};
 			if (m_airplanes.at(id).getCtrl().gunfire && (bullets.second.empty() ||
 				timestep - bullets.second.front().getSpawnTimestep() > bulletCooldown))
 			{
 				Common::State airplaneState = m_airplanes.at(id).getState();
-
 				Common::AirplaneTypeName airplaneTypeName =
 					m_airplanes.at(id).getAirplaneTypeName();
-				glm::vec3 muzzlePosition = -Common::airplaneCenterOfMassDatabase[
-					static_cast<std::size_t>(airplaneTypeName)];
-				glm::vec3 muzzleVelocity{};
-				switch (airplaneTypeName)
-				{
-				case Common::AirplaneTypeName::mustang:
-					muzzlePosition += glm::vec3{0, 0, -Common::tracerLength};
-					muzzleVelocity = glm::vec3{0, 0, -200};
-					break;
-
-				case Common::AirplaneTypeName::jw1:
-					muzzlePosition += glm::vec3{0.6, 0.63, 3.14 - Common::tracerLength};
-					muzzleVelocity = glm::vec3{0, 0, -343};
-					break;
-				}
+				glm::vec3 initialPositionLocal =
+					airplaneDefinitions[toSizeT(airplaneTypeName)].muzzlePosition +
+					glm::vec3{0, 0, -Common::tracerLength};
+				glm::vec3 initialVelocityLocal =
+					airplaneDefinitions[toSizeT(airplaneTypeName)].muzzleVelocity;
 
 				Common::State state{};
-				state.position = glm::vec3{airplaneState.matrix() * glm::vec4{muzzlePosition, 1}};
+				state.position =
+					glm::vec3{airplaneState.matrix() * glm::vec4{initialPositionLocal, 1}};
 				state.orientation = airplaneState.orientation;
-				state.velocity = airplaneState.velocity + muzzleVelocity;
+				state.velocity = airplaneState.velocity + initialVelocityLocal;
 
 				bullets.second.push_front(Bullet{state, timestep});
 			}

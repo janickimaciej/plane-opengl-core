@@ -7,9 +7,9 @@ namespace Physics
 	Timestep Timestep::previous() const
 	{
 		Timestep previousTimestep{};
-		if (frame == 0)
+		if (step == 0)
 		{
-			previousTimestep.frame = Common::framesPerSecond - 1;
+			previousTimestep.step = Common::stepsPerSecond - 1;
 			if (second == 0)
 			{
 				previousTimestep.second = secondsPerMinute - 1;
@@ -22,7 +22,7 @@ namespace Physics
 		else
 		{
 			previousTimestep.second = second;
-			previousTimestep.frame = frame - 1;
+			previousTimestep.step = step - 1;
 		}
 		return previousTimestep;
 	}
@@ -30,9 +30,9 @@ namespace Physics
 	Timestep Timestep::next() const
 	{
 		Timestep nextTimestep{};
-		if (frame == Common::framesPerSecond - 1)
+		if (step == Common::stepsPerSecond - 1)
 		{
-			nextTimestep.frame = 0;
+			nextTimestep.step = 0;
 			if (second == secondsPerMinute - 1)
 			{
 				nextTimestep.second = 0;
@@ -45,7 +45,7 @@ namespace Physics
 		else
 		{
 			nextTimestep.second = second;
-			nextTimestep.frame = frame + 1;
+			nextTimestep.step = step + 1;
 		}
 		return nextTimestep;
 	}
@@ -53,24 +53,24 @@ namespace Physics
 	Timestep operator-(const Timestep& timestep1, const Timestep& timestep2)
 	{
 		int second = static_cast<int>(timestep1.second) - static_cast<int>(timestep2.second);
-		int frame = static_cast<int>(timestep1.frame) -
-			static_cast<int>(timestep2.frame);
-		Timestep::normalize(second, frame);
-		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(frame)};
+		int step = static_cast<int>(timestep1.step) -
+			static_cast<int>(timestep2.step);
+		Timestep::normalize(second, step);
+		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(step)};
 	}
 
 	Timestep operator+(const Timestep& timestep1, const Timestep& timestep2)
 	{
 		int second = static_cast<int>(timestep1.second) + static_cast<int>(timestep2.second);
-		int frame = static_cast<int>(timestep1.frame) +
-			static_cast<int>(timestep2.frame);
-		Timestep::normalize(second, frame);
-		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(frame)};
+		int step = static_cast<int>(timestep1.step) +
+			static_cast<int>(timestep2.step);
+		Timestep::normalize(second, step);
+		return Timestep{static_cast<unsigned int>(second), static_cast<unsigned int>(step)};
 	}
 
 	bool operator==(const Timestep& timestep1, const Timestep& timestep2)
 	{
-		return timestep1.second == timestep2.second && timestep1.frame == timestep2.frame;
+		return timestep1.second == timestep2.second && timestep1.step == timestep2.step;
 	}
 
 	bool operator<(const Timestep& timestep1, const Timestep& timestep2)
@@ -88,11 +88,11 @@ namespace Physics
 		return !(timestep1 <= timestep2);
 	}
 
-	void Timestep::normalize(int& second, int& frame)
+	void Timestep::normalize(int& second, int& step)
 	{
-		while (frame < 0)
+		while (step < 0)
 		{
-			frame += Common::framesPerSecond;
+			step += Common::stepsPerSecond;
 			--second;
 		}
 
@@ -101,9 +101,9 @@ namespace Physics
 			second += secondsPerMinute;
 		}
 
-		while (frame >= Common::framesPerSecond)
+		while (step >= Common::stepsPerSecond)
 		{
-			frame -= Common::framesPerSecond;
+			step -= Common::stepsPerSecond;
 			++second;
 		}
 

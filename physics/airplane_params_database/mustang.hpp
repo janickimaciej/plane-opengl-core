@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/airplane_center_of_mass_database.hpp"
+#include "common/airplane_centers_of_mass.hpp"
 #include "common/airplane_type_name.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
 
@@ -19,8 +19,8 @@ namespace Physics
 			0, 29500, 350,
 			0, 350, 14800
 		};
-		inline constexpr glm::vec3 centerOfMass = Common::airplaneCenterOfMassDatabase[
-			static_cast<std::size_t>(Common::AirplaneTypeName::mustang)];
+		inline constexpr glm::vec3 centerOfMass = Common::airplaneCentersOfMass[
+			toSizeT(Common::AirplaneTypeName::mustang)];
 	
 		inline constexpr float hStabIncidenceAngleDeg = 0;
 		inline constexpr float hStabArea = 3.54f;

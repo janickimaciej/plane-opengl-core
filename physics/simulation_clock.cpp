@@ -23,12 +23,12 @@ namespace Physics
 			std::chrono::duration_cast<std::chrono::milliseconds>(simulationTime - minutes -
 				seconds);
 
-		static constexpr float framesPerMillisecond = static_cast<float>(Common::framesPerSecond) /
+		static constexpr float stepsPerMillisecond = static_cast<float>(Common::stepsPerSecond) /
 			millisecondsPerSecond;
 		return Timestep
 			{
 				static_cast<unsigned int>(seconds.count()),
-				static_cast<unsigned int>(milliseconds.count() * framesPerMillisecond)
+				static_cast<unsigned int>(milliseconds.count() * stepsPerMillisecond)
 			};
 	}
 

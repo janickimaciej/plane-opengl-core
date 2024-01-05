@@ -17,7 +17,7 @@ namespace Physics
 	class SimulationBuffer
 	{
 	public:
-		static constexpr int simulationBufferSize = Common::framesPerSecond;
+		static constexpr int simulationBufferSize = Common::stepsPerSecond;
 
 		SimulationBuffer(int ownId);
 		
@@ -36,18 +36,15 @@ namespace Physics
 	private:
 		std::array<SimulationBufferElement, simulationBufferSize> m_buffer{};
 		int m_ownId{};
-
-		void removePlayers(const Timestep& timestep,
-			const std::unordered_map<int, PlayerInfo>& playerInfos);
+		
 		void addAndUpdatePlayers(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
-
-		void removePlayers(const Timestep& previousTimestep, const Timestep& timestep);
+		void removePlayers(const Timestep& timestep,
+			const std::unordered_map<int, PlayerInfo>& playerInfos);
+		
 		void addAndUpdatePlayers(const Timestep& previousTimestep, const Timestep& timestep);
+		void removePlayers(const Timestep& previousTimestep, const Timestep& timestep);
 
 		void clearLocks(const Timestep& timestep);
-		void updateScene(const Timestep& previousTimestep, const Timestep& timestep,
-			const std::unordered_map<int, PlayerInfo>& playerInfos,
-			const std::unordered_map<int, bool>& stateLocks);
 	};
 };

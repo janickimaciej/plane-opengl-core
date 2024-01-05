@@ -15,6 +15,7 @@ namespace Physics
 		float getRudderAngleRad() const;
 		float getAileronsAngleRad() const;
 		float getThrustRelative() const;
+		PlayerInput getPlayerInput() const;
 		void setPlayerInput(const PlayerInput& playerInput);
 		Common::AirplaneCtrl getCtrl() const;
 	

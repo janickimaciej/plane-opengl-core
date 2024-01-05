@@ -26,11 +26,11 @@ namespace Physics
 		std::unordered_map<int, std::list<Bullet>> m_bullets{};
 
 		DayNightCycle m_dayNightCycle{};
-
-		void removeAirplanes(const Scene& previousScene,
-			const std::unordered_map<int, bool>& stateLocks);
+		
 		void addAndUpdateAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, PlayerInfo>& playerInfos,
+			const std::unordered_map<int, bool>& stateLocks);
+		void removeAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, bool>& stateLocks);
 		void updateBullets(const Timestep& timestep, const Scene& previousScene);
 		void detectCollisions();

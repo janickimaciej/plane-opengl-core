@@ -180,8 +180,8 @@ namespace App
 		std::array<unsigned char, 2> serializedTimestep{};
 		serializedTimestep[0] = static_cast<unsigned char>(timestep.second);
 		serializedTimestep[0] <<= 2;
-		serializedTimestep[0] |= static_cast<unsigned char>(timestep.frame >> 8);
-		serializedTimestep[1] = static_cast<unsigned char>(timestep.frame);
+		serializedTimestep[0] |= static_cast<unsigned char>(timestep.step >> 8);
+		serializedTimestep[1] = static_cast<unsigned char>(timestep.step);
 		return serializedTimestep;
 	}
 
@@ -200,10 +200,10 @@ namespace App
 	{
 		Physics::Timestep deserializedTimestep{};
 		deserializedTimestep.second = static_cast<unsigned int>(timestep[0] >> 2);
-		deserializedTimestep.frame =
+		deserializedTimestep.step =
 			static_cast<unsigned int>(timestep[0] - ((timestep[0] >> 2) << 2));
-		deserializedTimestep.frame <<= 8;
-		deserializedTimestep.frame |= static_cast<unsigned int>(timestep[1]);
+		deserializedTimestep.step <<= 8;
+		deserializedTimestep.step |= static_cast<unsigned int>(timestep[1]);
 		return deserializedTimestep;
 	}
 };

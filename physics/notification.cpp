@@ -23,9 +23,9 @@ namespace Physics
 	void Notification::getNotification(Timestep& timestep)
 	{
 		constexpr Timestep beginIngoringOffset{0,
-			static_cast<unsigned int>(Common::framesPerSecond * 0.9f)};
+			static_cast<unsigned int>(Common::stepsPerSecond * 0.9f)};
 		constexpr Timestep endIgnoringOffset{0,
-			static_cast<unsigned int>(Common::framesPerSecond * 0.2f)};
+			static_cast<unsigned int>(Common::stepsPerSecond * 0.2f)};
 		if (timestep <= m_simulationClock.getTime() - beginIngoringOffset)
 		{
 			m_ignoring = true;

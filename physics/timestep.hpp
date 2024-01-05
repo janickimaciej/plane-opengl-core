@@ -10,7 +10,7 @@ namespace Physics
 	struct Timestep
 	{
 		unsigned int second{};
-		unsigned int frame{};
+		unsigned int step{};
 
 		Timestep previous() const;
 		Timestep next() const;
@@ -24,6 +24,6 @@ namespace Physics
 		friend bool operator>(const Timestep& timestep1, const Timestep& timestep2);
 
 	private:
-		static void normalize(int& second, int& frame);
+		static void normalize(int& second, int& step);
 	};
 };

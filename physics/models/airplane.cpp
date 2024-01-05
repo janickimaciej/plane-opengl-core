@@ -1,7 +1,7 @@
 #include "physics/models/airplane.hpp"
 
+#include "physics/airplane_definitions.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
-#include "physics/airplane_params_database/airplane_params_database.hpp"
 #include "physics/flight_ctrl.hpp"
 #include "physics/model_dynamics/airplane_dynamics.hpp"
 #include "physics/models/model.hpp"
@@ -14,25 +14,28 @@
 
 namespace Physics
 {
-	Airplane::Airplane(const Common::AirplaneTypeName& airplaneTypeName) :
+	Airplane::Airplane(const Common::AirplaneTypeName& airplaneTypeName, int hp) :
 		m_airplaneTypeName{airplaneTypeName},
-		m_airplaneParams{airplaneParamsDatabase[static_cast<std::size_t>(airplaneTypeName)]},
+		m_airplaneParams{airplaneDefinitions[toSizeT(airplaneTypeName)].params},
 		m_flightCtrl{m_airplaneParams},
-		m_dynamics{m_airplaneParams, m_flightCtrl}
+		m_dynamics{m_airplaneParams, m_flightCtrl},
+		m_hp{hp}
 	{ }
 
 	Airplane::Airplane(const Airplane& airplane) :
 		m_airplaneTypeName{airplane.m_airplaneTypeName},
 		m_airplaneParams{airplane.m_airplaneParams},
 		m_flightCtrl{airplane.m_flightCtrl},
-		m_dynamics{m_airplaneParams, m_flightCtrl}
+		m_dynamics{m_airplaneParams, m_flightCtrl},
+		m_hp{airplane.m_hp}
 	{ }
 
 	Airplane::Airplane(Airplane&& airplane) noexcept :
 		m_airplaneTypeName{airplane.m_airplaneTypeName},
 		m_airplaneParams{airplane.m_airplaneParams},
 		m_flightCtrl{airplane.m_flightCtrl},
-		m_dynamics{m_airplaneParams, m_flightCtrl}
+		m_dynamics{m_airplaneParams, m_flightCtrl},
+		m_hp{airplane.m_hp}
 	{ }
 
 	void Airplane::update(const Airplane& previousAirplane)
@@ -45,14 +48,24 @@ namespace Physics
 	{
 		return m_airplaneTypeName;
 	}
-
-	Common::AirplaneCtrl Airplane::getCtrl() const
+	
+	PlayerInput Airplane::getPlayerInput() const
 	{
-		return m_flightCtrl.getCtrl();
+		return m_flightCtrl.getPlayerInput();
 	}
 
 	void Airplane::setPlayerInput(const PlayerInput& input)
 	{
 		m_flightCtrl.setPlayerInput(input);
+	}
+
+	Common::AirplaneCtrl Airplane::getCtrl() const
+	{
+		return m_flightCtrl.getCtrl();
+	}
+	
+	int Airplane::getHP() const
+	{
+		return m_hp;
 	}
 };
