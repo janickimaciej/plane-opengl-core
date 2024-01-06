@@ -78,19 +78,27 @@ namespace Common
 	void Transformable::mirrorX()
 	{
 		m_mirrorX = !m_mirrorX;
+		m_isWindingOrderClockwise = !m_isWindingOrderClockwise;
 		updateMatrix();
 	}
 
 	void Transformable::mirrorY()
 	{
 		m_mirrorY = !m_mirrorY;
+		m_isWindingOrderClockwise = !m_isWindingOrderClockwise;
 		updateMatrix();
 	}
 
 	void Transformable::mirrorZ()
 	{
 		m_mirrorZ = !m_mirrorZ;
+		m_isWindingOrderClockwise = !m_isWindingOrderClockwise;
 		updateMatrix();
+	}
+	
+	bool Transformable::isWindingOrderClockwise() const
+	{
+		return m_isWindingOrderClockwise;
 	}
 
 	void Transformable::updateMatrix()

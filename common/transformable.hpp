@@ -30,12 +30,14 @@ namespace Common
 		virtual void mirrorX(); // locally
 		virtual void mirrorY(); // locally
 		virtual void mirrorZ(); // locally
+		bool isWindingOrderClockwise() const;
 
 	private:
 		State m_state{};
 		bool m_mirrorX = false;
 		bool m_mirrorY = false;
 		bool m_mirrorZ = false;
+		bool m_isWindingOrderClockwise = false;
 		float m_scaleRatio = 1;
 		glm::mat4 m_matrix{};
 
