@@ -30,9 +30,9 @@ namespace Physics::Collisions
 		const Common::State& movingNextState, const Ellipsoid& stationary,
 		const Common::State& stationaryState)
 	{
-		glm::vec3 segmentStart = pointToEllipsoidSystem(moving, movingPreviousState, stationary,
+		glm::vec3 segmentStart = toEllipsoidSystem(moving, movingPreviousState, stationary,
 			stationaryState);
-		glm::vec3 segmentEnd = pointToEllipsoidSystem(moving, movingNextState, stationary,
+		glm::vec3 segmentEnd = toEllipsoidSystem(moving, movingNextState, stationary,
 			stationaryState);
 		glm::vec3 segment = segmentEnd - segmentStart;
 
@@ -93,7 +93,7 @@ namespace Physics::Collisions
 		return false;
 	}
 
-	glm::vec3 CollisionTest::pointToEllipsoidSystem(const glm::vec3& point,
+	glm::vec3 CollisionTest::toEllipsoidSystem(const glm::vec3& point,
 		const Common::State& pointState, const Ellipsoid& ellipsoid,
 		const Common::State& ellipsoidState)
 	{

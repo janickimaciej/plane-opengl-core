@@ -132,8 +132,7 @@ namespace Physics
 			playerInfos, stateLocks);
 	}
 
-	Common::SceneInfo SimulationBuffer::getSceneInfo(
-		const Timestep& timestep) const
+	Common::SceneInfo SimulationBuffer::getSceneInfo(const Timestep& timestep) const
 	{
 		m_buffer[timestep.step]->mutex.lock();
 

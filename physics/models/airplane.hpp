@@ -44,6 +44,5 @@ namespace Physics
 		Collisions::Airplane m_collisionModel{};
 		std::optional<Timestep> m_lastShotTimestep = std::nullopt;
 		int m_hp{};
-		bool m_isDestroyed = false;
 	};
 };

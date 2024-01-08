@@ -27,8 +27,7 @@ namespace Physics::Collisions
 			const Common::State& stationaryState);
 
 	private:
-		static glm::vec3 pointToEllipsoidSystem(const glm::vec3& point,
-			const Common::State& pointState, const Ellipsoid& ellipsoid,
-			const Common::State& ellipsoidState);
+		static glm::vec3 toEllipsoidSystem(const glm::vec3& point, const Common::State& pointState,
+			const Ellipsoid& ellipsoid, const Common::State& ellipsoidState);
 	};
 };

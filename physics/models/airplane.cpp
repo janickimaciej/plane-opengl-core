@@ -55,6 +55,7 @@ namespace Physics
 		if (isStateLocked)
 		{
 			setState(playerInfo.state.state);
+			m_hp = playerInfo.state.hp;
 		}
 		if (!isStateLocked && previousAirplane)
 		{
