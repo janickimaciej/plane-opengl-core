@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/config.hpp"
+#include "common/map_name.hpp"
 #include "common/scene_info.hpp"
 #include "physics/player_info.hpp"
 #include "physics/player_input.hpp"
@@ -9,6 +10,7 @@
 #include "physics/timestep.hpp"
 
 #include <array>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -19,7 +21,7 @@ namespace Physics
 	public:
 		static constexpr int simulationBufferSize = Common::stepsPerSecond;
 
-		SimulationBuffer(int ownId);
+		SimulationBuffer(int ownId, Common::MapName mapName);
 		
 		void writeInitFrame(const Timestep& timestep, int playerId, const PlayerInfo& playerInfo);
 		void writeControlFrame(const Timestep& timestep, int playerId,
@@ -34,7 +36,7 @@ namespace Physics
 		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep) const;
 
 	private:
-		std::array<SimulationBufferElement, simulationBufferSize> m_buffer{};
+		std::array<std::unique_ptr<SimulationBufferElement>, simulationBufferSize> m_buffer{};
 		int m_ownId{};
 		
 		void addAndUpdatePlayers(const Timestep& timestep,

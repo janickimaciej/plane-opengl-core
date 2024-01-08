@@ -1,24 +1,34 @@
 #include "flight_ctrl.hpp"
 
+#include "common/airplane_ctrl.hpp"
 #include "common/config.hpp"
 #include "physics/airplane_params/airplane_params.hpp"
 #include "physics/airplane_params/surface_params.hpp"
+#include "physics/player_input.hpp"
 
 #include <algorithm>
 
 namespace Physics
 {
-	FlightCtrl::FlightCtrl(const AirplaneParams& airplaneParams) :
-		m_airplaneParams{airplaneParams}
+	FlightCtrl::FlightCtrl(const AirplaneParams& airplaneParams, const int& hp) :
+		m_airplaneParams{airplaneParams},
+		m_hp{hp}
 	{ }
 
 	void FlightCtrl::update(const FlightCtrl& previousAirplaneFlightCtrl)
 	{
-		updateElevator(previousAirplaneFlightCtrl.m_airplaneCtrl.elevatorAngleRad);
-		updateRudder(previousAirplaneFlightCtrl.m_airplaneCtrl.rudderAngleRad);
-		updateAilerons(previousAirplaneFlightCtrl.m_airplaneCtrl.aileronsAngleRad);
-		updateThrust(previousAirplaneFlightCtrl.m_airplaneCtrl.thrustRelative);
-		updateGunfire();
+		if (m_hp != 0)
+		{
+			updateElevator(previousAirplaneFlightCtrl.m_airplaneCtrl.elevatorAngleRad);
+			updateRudder(previousAirplaneFlightCtrl.m_airplaneCtrl.rudderAngleRad);
+			updateAilerons(previousAirplaneFlightCtrl.m_airplaneCtrl.aileronsAngleRad);
+			updateThrust(previousAirplaneFlightCtrl.m_airplaneCtrl.thrustRelative);
+			updateGunfire();
+		}
+		else
+		{
+			m_airplaneCtrl = Common::AirplaneCtrl{};
+		}
 	}
 
 	float FlightCtrl::getElevatorAngleRad() const
@@ -41,7 +51,7 @@ namespace Physics
 		return m_airplaneCtrl.thrustRelative;
 	}
 
-	Common::AirplaneCtrl FlightCtrl::getCtrl() const
+	const Common::AirplaneCtrl& FlightCtrl::getCtrl() const
 	{
 		return m_airplaneCtrl;
 	}

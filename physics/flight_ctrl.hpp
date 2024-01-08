@@ -9,7 +9,7 @@ namespace Physics
 	class FlightCtrl
 	{
 	public:
-		FlightCtrl(const AirplaneParams& airplaneParams);
+		FlightCtrl(const AirplaneParams& airplaneParams, const int& hp);
 		void update(const FlightCtrl& previousAirplaneFlightCtrl);
 		float getElevatorAngleRad() const;
 		float getRudderAngleRad() const;
@@ -17,12 +17,13 @@ namespace Physics
 		float getThrustRelative() const;
 		PlayerInput getPlayerInput() const;
 		void setPlayerInput(const PlayerInput& playerInput);
-		Common::AirplaneCtrl getCtrl() const;
+		const Common::AirplaneCtrl& getCtrl() const;
 	
 	private:
 		const AirplaneParams& m_airplaneParams;
 		PlayerInput m_playerInput{};
 		Common::AirplaneCtrl m_airplaneCtrl{};
+		const int& m_hp;
 		
 		void updateElevator(float previousElevatorAngleRad);
 		void updateRudder(float previousRudderAngleRad);

@@ -7,8 +7,8 @@ namespace Physics
 {
 	struct PlayerState
 	{
+		Common::AirplaneTypeName airplaneTypeName;
 		int hp{};
 		Common::State state{};
-		Common::AirplaneTypeName airplaneTypeName;
 	};
 };

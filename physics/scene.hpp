@@ -1,6 +1,8 @@
 #pragma once
 
+#include "common/map_name.hpp"
 #include "common/scene_info.hpp"
+#include "common/terrains/maps/map.hpp"
 #include "physics/day_night_cycle.hpp"
 #include "physics/models/airplane.hpp"
 #include "physics/models/bullet.hpp"
@@ -15,6 +17,7 @@ namespace Physics
 	class Scene
 	{
 	public:
+		Scene(Common::MapName mapName);
 		void update(const Timestep& timestep, const Scene& previousScene,
 			const std::unordered_map<int, PlayerInfo>& playerInfos,
 			const std::unordered_map<int, bool>& stateLocks);
@@ -26,6 +29,8 @@ namespace Physics
 		std::unordered_map<int, std::list<Bullet>> m_bullets{};
 
 		DayNightCycle m_dayNightCycle{};
+
+		const Common::Terrains::Map& m_map;
 		
 		void addAndUpdateAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, PlayerInfo>& playerInfos,
@@ -33,6 +38,9 @@ namespace Physics
 		void removeAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, bool>& stateLocks);
 		void updateBullets(const Timestep& timestep, const Scene& previousScene);
-		void detectCollisions();
+		void updateAirplanePhase1(int index, const Scene& previousScene,
+			const PlayerInfo& playerInfo, bool isStateLocked);
+		void updateAirplanePhase2(int index);
+		bool updateBullet(Bullet& bullet);
 	};
 };

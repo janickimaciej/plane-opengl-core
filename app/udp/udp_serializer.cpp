@@ -157,9 +157,9 @@ namespace App
 					},
 					Physics::PlayerState
 					{
+						static_cast<Common::AirplaneTypeName>(playerInfo.airplaneType),
 						playerInfo.hp,
-						Common::State(playerInfo.state),
-						static_cast<Common::AirplaneTypeName>(playerInfo.airplaneType)
+						Common::State(playerInfo.state)
 					}
 				}});
 		}

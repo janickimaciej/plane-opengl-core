@@ -5,19 +5,28 @@
 #include "common/airplane_type_name.hpp"
 #include "common/bullet_info.hpp"
 #include "common/config.hpp"
+#include "common/map_name.hpp"
 #include "common/scene_info.hpp"
+#include "common/terrains/maps/maps.hpp"
 #include "physics/airplane_definitions.hpp"
+#include "physics/collisions/collision_test.hpp"
 #include "physics/models/airplane.hpp"
 #include "physics/player_info.hpp"
 #include "physics/timestep.hpp"
 
 #include <cstddef>
 #include <list>
+#include <optional>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 namespace Physics
 {
+	Scene::Scene(Common::MapName mapName) :
+		m_map{*Common::Terrains::maps[Common::toSizeT(mapName)]}
+	{ }
+
 	void Scene::update(const Timestep& timestep, const Scene& previousScene,
 		const std::unordered_map<int, PlayerInfo>& playerInfos,
 		const std::unordered_map<int, bool>& stateLocks)
@@ -25,7 +34,6 @@ namespace Physics
 		addAndUpdateAirplanes(previousScene, playerInfos, stateLocks);
 		removeAirplanes(previousScene, stateLocks);
 		updateBullets(timestep, previousScene);
-		detectCollisions();
 		m_dayNightCycle.updateTime(previousScene.m_dayNightCycle);
 	}
 
@@ -34,13 +42,7 @@ namespace Physics
 		Common::SceneInfo sceneInfo{};
 		for (const std::pair<const int, Airplane>& airplane : m_airplanes)
 		{
-			sceneInfo.airplaneInfos.insert({airplane.first,
-				Common::AirplaneInfo
-				{
-					airplane.second.getState(),
-					airplane.second.getCtrl(),
-					airplane.second.getAirplaneTypeName()
-				}});
+			sceneInfo.airplaneInfos.insert({airplane.first, airplane.second.getAirplaneInfo()});
 		}
 		for (const std::pair<const int, std::list<Bullet>>& bullets : m_bullets)
 		{
@@ -59,17 +61,7 @@ namespace Physics
 		std::unordered_map<int, PlayerInfo> playerInfos{};
 		for (const std::pair<const int, Airplane>& airplane : m_airplanes)
 		{
-			playerInfos.insert({airplane.first,
-				PlayerInfo
-				{
-					airplane.second.getPlayerInput(),
-					PlayerState
-					{
-						airplane.second.getHP(),
-						airplane.second.getState(),
-						airplane.second.getAirplaneTypeName()
-					}
-				}});
+			playerInfos.insert({airplane.first, airplane.second.getPlayerInfo()});
 		}
 		return playerInfos;
 	}
@@ -81,6 +73,7 @@ namespace Physics
 		for (const std::pair<const int, bool>& stateLock : stateLocks)
 		{
 			int index = stateLock.first;
+
 			if (!m_airplanes.contains(index))
 			{
 				Common::AirplaneTypeName airplaneTypeName =
@@ -94,14 +87,14 @@ namespace Physics
 				m_bullets.insert({index, std::list<Bullet>{}});
 			}
 			
-			m_airplanes.at(index).setPlayerInput(playerInfos.at(index).input);
-			if (stateLocks.at(index))
+			updateAirplanePhase1(index, previousScene, playerInfos.at(index), stateLocks.at(index));
+		}
+
+		for (const std::pair<const int, bool>& stateLock : stateLocks)
+		{
+			if (!stateLock.second)
 			{
-				m_airplanes.at(index).setState(playerInfos.at(index).state.state);
-			}
-			else if (previousScene.m_airplanes.contains(index))
-			{
-				m_airplanes.at(index).update(previousScene.m_airplanes.at(index));
+				updateAirplanePhase2(stateLock.first);
 			}
 		}
 	}
@@ -136,21 +129,36 @@ namespace Physics
 				bullets.second = previousScene.m_bullets.at(id);
 			}
 
+			std::optional<Timestep> lastShotTimestep = m_airplanes.at(id).getLastShotTimestep();
+
 			static constexpr Timestep bulletLifetime{5, 0};
+			if (lastShotTimestep.has_value() && timestep - *lastShotTimestep > bulletLifetime)
+			{
+				m_airplanes.at(id).setLastShotTimestep(std::nullopt);
+			}
 			while (!bullets.second.empty() &&
 				timestep - bullets.second.back().getSpawnTimestep() > bulletLifetime)
 			{
 				bullets.second.pop_back();
 			}
 
-			for (Bullet& bullet : bullets.second)
+			for (std::list<Bullet>::iterator iter = bullets.second.begin();
+				iter != bullets.second.end();)
 			{
-				bullet.update(bullet);
+				if (updateBullet(*iter))
+				{
+					iter = bullets.second.erase(iter);
+				}
+				else
+				{
+					++iter;
+				}
 			}
 
 			static constexpr Timestep bulletCooldown{0, Common::stepsPerSecond / 2};
-			if (m_airplanes.at(id).getCtrl().gunfire && (bullets.second.empty() ||
-				timestep - bullets.second.front().getSpawnTimestep() > bulletCooldown))
+			if (m_airplanes.at(id).getCtrl().gunfire &&
+				(!m_airplanes.at(id).getLastShotTimestep().has_value() ||
+				timestep - *m_airplanes.at(id).getLastShotTimestep() > bulletCooldown))
 			{
 				Common::State airplaneState = m_airplanes.at(id).getState();
 				Common::AirplaneTypeName airplaneTypeName =
@@ -168,12 +176,69 @@ namespace Physics
 				state.velocity = airplaneState.velocity + initialVelocityLocal;
 
 				bullets.second.push_front(Bullet{state, timestep});
+				m_airplanes.at(id).setLastShotTimestep(timestep);
 			}
 		}
 	}
 
-	void Scene::detectCollisions()
+	void Scene::updateAirplanePhase1(int index, const Scene& previousScene,
+		const PlayerInfo& playerInfo, bool isStateLocked)
 	{
-		// TODO
+		const Airplane* previousAirplane = previousScene.m_airplanes.contains(index) ?
+			&previousScene.m_airplanes.at(index) : nullptr;
+		m_airplanes.at(index).updatePhase1(previousAirplane, playerInfo, isStateLocked);
+	}
+
+	void Scene::updateAirplanePhase2(int index)
+	{
+		Airplane& airplane = m_airplanes.at(index);
+		Common::State previousState = airplane.getState();
+		airplane.updatePhase2();
+		Common::State nextState = airplane.getState();
+		if (Collisions::CollisionTest::collides(airplane.getCollisionModel(), previousState,
+			nextState, m_map))
+		{
+			airplane.destroy();
+			return;
+		}
+
+		for (const std::pair<const int, Airplane>& otherAirplane : m_airplanes)
+		{
+			if (otherAirplane.first == index)
+			{
+				continue;
+			}
+
+			if (Collisions::CollisionTest::collides(airplane.getCollisionModel(), previousState,
+				nextState, otherAirplane.second.getCollisionModel(),
+				otherAirplane.second.getState()))
+			{
+				airplane.destroy();
+				return;
+			}
+		}
+	}
+
+	bool Scene::updateBullet(Bullet& bullet)
+	{
+		Common::State previousState = bullet.getState();
+		bullet.update(bullet);
+		Common::State nextState = bullet.getState();
+		if (Collisions::CollisionTest::collides(glm::vec3{0, 0, 0}, previousState, nextState,
+			m_map))
+		{
+			return true;
+		}
+		for (std::pair<const int, Airplane>& airplane : m_airplanes)
+		{
+			if (Collisions::CollisionTest::collides(glm::vec3{0, 0, 0}, previousState, nextState,
+				airplane.second.getCollisionModel(), airplane.second.getState()))
+			{
+				const int bulletDamage = 10;
+				airplane.second.damage(bulletDamage);
+				return true;
+			}
+		}
+		return false;
 	}
 };

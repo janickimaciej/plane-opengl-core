@@ -11,5 +11,6 @@ namespace Common
 		State state{};
 		AirplaneCtrl airplaneCtrl{};
 		AirplaneTypeName airplaneTypeName{};
+		int hp{};
 	};
 };
