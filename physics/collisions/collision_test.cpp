@@ -37,7 +37,7 @@ namespace Physics::Collisions
 		glm::vec3 segment = segmentEnd - segmentStart;
 
 		float a = glm::dot(segment, segment);
-		float b = 2 * glm::dot(segmentStart, segment);
+		float b = glm::dot(segmentStart, segment);
 		float c = glm::dot(segmentStart, segmentStart) - 1;
 
 		if (c <= 0)

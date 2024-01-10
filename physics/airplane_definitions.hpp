@@ -22,7 +22,7 @@ namespace Physics
 			mustangParams,
 			glm::vec3{0, 0, -100},
 			-Common::airplaneCentersOfMass[toSizeT(Common::AirplaneTypeName::mustang)],
-			glm::vec3{0, 0, -200},
+			glm::vec3{0, 0, -500},
 			Collisions::Airplane
 			{
 				Collisions::Ellipsoid
@@ -56,7 +56,7 @@ namespace Physics
 			glm::vec3{0, 0, -343},
 			-Common::airplaneCentersOfMass[toSizeT(Common::AirplaneTypeName::jw1)] +
 				glm::vec3{0.6, 0.63, 3.14},
-			glm::vec3{0, 0, -343},
+			glm::vec3{0, 0, -1000},
 			Collisions::Airplane
 			{
 				Collisions::Ellipsoid

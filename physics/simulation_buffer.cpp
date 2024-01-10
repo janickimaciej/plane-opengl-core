@@ -87,13 +87,13 @@ namespace Physics
 		writeControlFrame(timestep, m_ownId, ownInput);
 	}
 
-	void SimulationBuffer::removeInactivePlayers(const std::vector<int>& removedPlayers,
+	void SimulationBuffer::kickPlayers(const std::vector<int>& kickedPlayers,
 		const Physics::Timestep& timestep)
 	{
 		m_buffer[timestep.step]->mutex.lock();
 		
 		bool isSecondOdd = timestep.second % 2;
-		m_buffer[timestep.step]->removedPlayers[isSecondOdd] = removedPlayers;
+		m_buffer[timestep.step]->removedPlayers[isSecondOdd] = kickedPlayers;
 
 		m_buffer[timestep.step]->mutex.unlock();
 	}

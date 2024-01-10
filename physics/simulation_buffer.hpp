@@ -29,8 +29,7 @@ namespace Physics
 		void writeStateFrame(const Timestep& timestep,
 			const std::unordered_map<int, PlayerInfo>& playerInfos);
 		void writeOwnInput(const Timestep& timestep, const PlayerInput& ownInput);
-		void removeInactivePlayers(const std::vector<int>& removedPlayers,
-			const Physics::Timestep& timestep);
+		void kickPlayers(const std::vector<int>& kickedPlayers, const Physics::Timestep& timestep);
 		void update(const Timestep& timestep);
 		Common::SceneInfo getSceneInfo(const Timestep& timestep) const;
 		std::unordered_map<int, Physics::PlayerInfo> getPlayerInfos(const Timestep& timestep) const;

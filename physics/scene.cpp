@@ -155,7 +155,7 @@ namespace Physics
 				}
 			}
 
-			static constexpr Timestep bulletCooldown{0, Common::stepsPerSecond / 2};
+			static constexpr Timestep bulletCooldown{0, Common::stepsPerSecond / 10};
 			if (m_airplanes.at(id).getCtrl().gunfire &&
 				(!m_airplanes.at(id).getLastShotTimestep().has_value() ||
 				timestep - *m_airplanes.at(id).getLastShotTimestep() > bulletCooldown))
@@ -234,7 +234,7 @@ namespace Physics
 			if (Collisions::CollisionTest::collides(glm::vec3{0, 0, 0}, previousState, nextState,
 				airplane.second.getCollisionModel(), airplane.second.getState()))
 			{
-				const int bulletDamage = 10;
+				const int bulletDamage = 100;
 				airplane.second.damage(bulletDamage);
 				return true;
 			}
