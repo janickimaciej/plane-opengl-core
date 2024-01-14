@@ -59,10 +59,10 @@ namespace App
 		frame.serverTimestamp = packTimestamp(serverTimestamp);
 		frame.timestep = packTimestep(timestep);
 		frame.playerId = static_cast<unsigned char>(playerId);
-		frame.pitch = static_cast<signed char>(playerInput.pitch * 100 + 0.5f);
-		frame.yaw = static_cast<signed char>(playerInput.yaw * 100 + 0.5f);
-		frame.roll = static_cast<signed char>(playerInput.roll * 100 + 0.5f);
-		frame.thrust = static_cast<unsigned char>(playerInput.thrust * 100 + 0.5f);
+		frame.pitch = playerInput.pitch;
+		frame.yaw = playerInput.yaw;
+		frame.roll = playerInput.roll;
+		frame.thrust = playerInput.thrust;
 		frame.trigger = playerInput.trigger;
 
 		std::size_t size = bitsery::quickSerialization<OutputAdapter>(buffer, frame);
@@ -81,10 +81,10 @@ namespace App
 				StateFramePlayerInfo
 				{
 					static_cast<unsigned char>(playerInfo.first),
-					static_cast<signed char>(playerInfo.second.input.pitch * 100 + 0.5f),
-					static_cast<signed char>(playerInfo.second.input.yaw * 100 + 0.5f),
-					static_cast<signed char>(playerInfo.second.input.roll * 100 + 0.5f),
-					static_cast<unsigned char>(playerInfo.second.input.thrust * 100 + 0.5f),
+					playerInfo.second.input.pitch,
+					playerInfo.second.input.yaw,
+					playerInfo.second.input.roll,
+					playerInfo.second.input.thrust,
 					playerInfo.second.input.trigger,
 					toUChar(playerInfo.second.state.airplaneTypeName),
 					static_cast<unsigned char>(playerInfo.second.state.hp),

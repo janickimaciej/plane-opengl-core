@@ -15,10 +15,10 @@ namespace App
 		std::array<unsigned char, 2> serverTimestamp{};
 		std::array<unsigned char, 2> timestep{};
 		unsigned char playerId{};
-		signed char pitch{};
-		signed char yaw{};
-		signed char roll{};
-		unsigned char thrust{};
+		float pitch{};
+		float yaw{};
+		float roll{};
+		float thrust{};
 		bool trigger{};
 	};
 
@@ -30,10 +30,10 @@ namespace App
 		t.container1b(frame.serverTimestamp);
 		t.container1b(frame.timestep);
 		t.value1b(frame.playerId);
-		t.value1b(frame.pitch);
-		t.value1b(frame.yaw);
-		t.value1b(frame.roll);
-		t.value1b(frame.thrust);
+		t.value4b(frame.pitch);
+		t.value4b(frame.yaw);
+		t.value4b(frame.roll);
+		t.value4b(frame.thrust);
 		t.value1b(frame.trigger);
 	}
 };
