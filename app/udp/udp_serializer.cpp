@@ -128,11 +128,11 @@ namespace App
 		serverTimestamp = unpackTimestamp(frame.serverTimestamp);
 		timestep = unpackTimestep(frame.timestep);
 		playerId = frame.playerId;
-		playerInput.pitch = static_cast<float>(frame.pitch) / 100;
-		playerInput.yaw = static_cast<float>(frame.yaw) / 100;
-		playerInput.roll = static_cast<float>(frame.roll) / 100;
-		playerInput.thrust = static_cast<float>(frame.thrust) / 100;
-		playerInput.trigger = static_cast<float>(frame.trigger) / 100;
+		playerInput.pitch = frame.pitch;
+		playerInput.yaw = frame.yaw;
+		playerInput.roll = frame.roll;
+		playerInput.thrust = frame.thrust;
+		playerInput.trigger = frame.trigger;
 	}
 
 	void UDPSerializer::deserializeStateFrame(const std::vector<std::uint8_t>& buffer,
@@ -149,10 +149,10 @@ namespace App
 				{
 					Physics::PlayerInput
 					{
-						static_cast<float>(playerInfo.pitch) / 100,
-						static_cast<float>(playerInfo.yaw) / 100,
-						static_cast<float>(playerInfo.roll) / 100,
-						static_cast<float>(playerInfo.thrust) / 100,
+						playerInfo.pitch,
+						playerInfo.yaw,
+						playerInfo.roll,
+						playerInfo.thrust,
 						playerInfo.trigger
 					},
 					Physics::PlayerState
