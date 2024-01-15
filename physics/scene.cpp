@@ -234,7 +234,7 @@ namespace Physics
 			if (Collisions::CollisionTest::collides(glm::vec3{0, 0, 0}, previousState, nextState,
 				airplane.second.getCollisionModel(), airplane.second.getState()))
 			{
-				const int bulletDamage = 100;
+				const int bulletDamage = 20;
 				airplane.second.damage(bulletDamage);
 				return true;
 			}
