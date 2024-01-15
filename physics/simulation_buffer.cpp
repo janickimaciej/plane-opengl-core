@@ -134,13 +134,7 @@ namespace Physics
 
 	Common::SceneInfo SimulationBuffer::getSceneInfo(const Timestep& timestep) const
 	{
-		m_buffer[timestep.step]->mutex.lock();
-
-		Common::SceneInfo sceneInfo = m_buffer[timestep.step]->scene.getSceneInfo();
-
-		m_buffer[timestep.step]->mutex.unlock();
-
-		return sceneInfo;
+		return m_buffer[timestep.step]->scene.getSceneInfo();
 	}
 
 	std::unordered_map<int, Physics::PlayerInfo> SimulationBuffer::getPlayerInfos(

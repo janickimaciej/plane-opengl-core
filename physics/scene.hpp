@@ -34,13 +34,13 @@ namespace Physics
 		
 		void addAndUpdateAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, PlayerInfo>& playerInfos,
-			const std::unordered_map<int, bool>& stateLocks);
+			const std::unordered_map<int, bool>& stateLocks, const Timestep& timestep);
 		void removeAirplanes(const Scene& previousScene,
 			const std::unordered_map<int, bool>& stateLocks);
 		void updateBullets(const Timestep& timestep, const Scene& previousScene);
 		void updateAirplanePhase1(int index, const Scene& previousScene,
 			const PlayerInfo& playerInfo, bool isStateLocked);
-		void updateAirplanePhase2(int index);
+		void updateAirplanePhase2(int index, const Timestep& timestep);
 		bool updateBullet(Bullet& bullet);
 	};
 };

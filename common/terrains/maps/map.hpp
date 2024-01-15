@@ -2,6 +2,8 @@
 
 #include "common/terrains/composite_terrain.hpp"
 
+#include <glm/glm.hpp>
+
 namespace Common::Terrains
 {
 	class Map : public CompositeTerrain
@@ -11,6 +13,7 @@ namespace Common::Terrains
 		float getLengthZ() const;
 		float getSpacingX() const;
 		float getSpacingZ() const;
+		bool isOutside(const glm::vec3& position) const;
 		virtual ~Map() = default;
 
 	protected:

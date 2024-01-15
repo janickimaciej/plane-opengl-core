@@ -1,5 +1,7 @@
 #include "common/terrains/maps/map.hpp"
 
+#include <glm/glm.hpp>
+
 namespace Common::Terrains
 {
 	float Map::getLengthX() const
@@ -20,6 +22,11 @@ namespace Common::Terrains
 	float Map::getSpacingZ() const
 	{
 		return m_spacingZ;
+	}
+
+	bool Map::isOutside(const glm::vec3& position) const
+	{
+		return position.x < 0 || position.x > m_lengthX || position.z < 0 || position.z > m_lengthZ;
 	}
 
 	Map::Map(float lengthX, float lengthZ, float spacingX, float spacingZ) :

@@ -31,7 +31,7 @@ namespace Physics
 		const std::unordered_map<int, PlayerInfo>& playerInfos,
 		const std::unordered_map<int, bool>& stateLocks)
 	{
-		addAndUpdateAirplanes(previousScene, playerInfos, stateLocks);
+		addAndUpdateAirplanes(previousScene, playerInfos, stateLocks, timestep);
 		removeAirplanes(previousScene, stateLocks);
 		updateBullets(timestep, previousScene);
 		m_dayNightCycle.updateTime(previousScene.m_dayNightCycle);
@@ -68,7 +68,7 @@ namespace Physics
 
 	void Scene::addAndUpdateAirplanes(const Scene& previousScene,
 		const std::unordered_map<int, PlayerInfo>& playerInfos,
-		const std::unordered_map<int, bool>& stateLocks)
+		const std::unordered_map<int, bool>& stateLocks, const Timestep& timestep)
 	{
 		for (const std::pair<const int, bool>& stateLock : stateLocks)
 		{
@@ -94,7 +94,7 @@ namespace Physics
 		{
 			if (!stateLock.second)
 			{
-				updateAirplanePhase2(stateLock.first);
+				updateAirplanePhase2(stateLock.first, timestep);
 			}
 		}
 	}
@@ -189,13 +189,22 @@ namespace Physics
 		m_airplanes.at(index).updatePhase1(previousAirplane, playerInfo, isStateLocked);
 	}
 
-	void Scene::updateAirplanePhase2(int index)
+	void Scene::updateAirplanePhase2(int index, const Timestep& timestep)
 	{
 		Airplane& airplane = m_airplanes.at(index);
 		Common::State previousState = airplane.getState();
 		airplane.updatePhase2();
 		Common::State nextState = airplane.getState();
-		if (Collisions::CollisionTest::collides(airplane.getCollisionModel(), previousState,
+
+		if (m_map.isOutside(airplane.getPosition()))
+		{
+			if (timestep.step == 0)
+			{
+				constexpr int outsideMapDamage = 5;
+				airplane.damage(outsideMapDamage);
+			}
+		}
+		else if (Collisions::CollisionTest::collides(airplane.getCollisionModel(), previousState,
 			nextState, m_map))
 		{
 			airplane.destroy();
