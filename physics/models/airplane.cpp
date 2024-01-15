@@ -50,6 +50,7 @@ namespace Physics
 		m_flightCtrl.setPlayerInput(playerInfo.input);
 		if (previousAirplane)
 		{
+			m_flightCtrl.update(previousAirplane->m_flightCtrl);
 			setLastShotTimestep(previousAirplane->getLastShotTimestep());
 		}
 		if (isStateLocked)
@@ -61,7 +62,6 @@ namespace Physics
 		{
 			setState(previousAirplane->getState());
 			m_hp = previousAirplane->m_hp;
-			m_flightCtrl.update(previousAirplane->m_flightCtrl);
 		}
 	}
 
