@@ -38,7 +38,7 @@ namespace Common
 		for (std::size_t i = 0; i < period; ++i)
 		{
 			m_values[i] = floatDistribution(generator);
-			m_permutation[i] = i;
+			m_permutation[i] = static_cast<unsigned int>(i);
 		}
 
 		std::uniform_int_distribution<unsigned int> intDistribution(0, period - 1);

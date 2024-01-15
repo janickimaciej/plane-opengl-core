@@ -17,12 +17,12 @@ namespace Common::Terrains
 	HillsMap::HillsMap() :
 		Map{lengthX, lengthZ, spacingX, spacingZ}
 	{
-		m_elements.push_back(std::make_unique<ValueNoise>(0.00012, 2048, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.00025, 1024, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.0005, 512, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.001, 256, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.002, 128, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.004, 64, 0));
-		m_elements.push_back(std::make_unique<ValueNoise>(0.008, 32, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.00012f, 2048, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.00025f, 1024, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.0005f, 512, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.001f, 256, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.002f, 128, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.004f, 64, 0));
+		m_elements.push_back(std::make_unique<ValueNoise>(0.008f, 32, 0));
 	}
 };
