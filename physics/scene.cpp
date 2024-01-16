@@ -200,7 +200,7 @@ namespace Physics
 		{
 			if (timestep.step == 0)
 			{
-				constexpr int outsideMapDamage = 5;
+				static constexpr int outsideMapDamage = 5;
 				airplane.damage(outsideMapDamage);
 			}
 		}

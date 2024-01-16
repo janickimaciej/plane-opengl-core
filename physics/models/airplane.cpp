@@ -48,6 +48,14 @@ namespace Physics
 		bool isStateLocked)
 	{
 		m_flightCtrl.setPlayerInput(playerInfo.input);
+		if (isStateLocked)
+		{
+			m_hp = playerInfo.state.hp;
+		}
+		else if (previousAirplane)
+		{
+			m_hp = previousAirplane->m_hp;
+		}
 		if (previousAirplane)
 		{
 			m_flightCtrl.update(previousAirplane->m_flightCtrl);
@@ -56,12 +64,10 @@ namespace Physics
 		if (isStateLocked)
 		{
 			setState(playerInfo.state.state);
-			m_hp = playerInfo.state.hp;
 		}
-		if (!isStateLocked && previousAirplane)
+		else if (previousAirplane)
 		{
 			setState(previousAirplane->getState());
-			m_hp = previousAirplane->m_hp;
 		}
 	}
 
