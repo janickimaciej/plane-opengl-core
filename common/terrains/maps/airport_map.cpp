@@ -11,4 +11,9 @@ namespace Common::Terrains
 	AirportMap::AirportMap() :
 		Map{lengthX, lengthZ, spacingX, spacingZ}
 	{ }
+
+	float AirportMap::getMaxHeight() const
+	{
+		return 0;
+	}
 };

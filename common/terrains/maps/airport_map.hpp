@@ -8,6 +8,7 @@ namespace Common::Terrains
 	{
 	public:
 		AirportMap();
+		virtual float getMaxHeight() const override;
 		virtual ~AirportMap() = default;
 	};
 };

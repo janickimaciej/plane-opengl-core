@@ -8,6 +8,7 @@ namespace Common::Terrains
 	{
 	public:
 		HillsMap();
+		virtual float getMaxHeight() const override;
 		virtual ~HillsMap() = default;
 	};
 };

@@ -25,4 +25,9 @@ namespace Common::Terrains
 		m_elements.push_back(std::make_unique<ValueNoise>(0.004f, 64, 0));
 		m_elements.push_back(std::make_unique<ValueNoise>(0.008f, 32, 0));
 	}
+	
+	float HillsMap::getMaxHeight() const
+	{
+		return 4100;
+	}
 };
