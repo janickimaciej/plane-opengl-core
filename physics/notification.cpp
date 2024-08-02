@@ -1,7 +1,7 @@
 #include "physics/notification.hpp"
 
 #include "common/config.hpp"
-#include "physics/simulation_clock.hpp"
+#include "physics/simulationClock.hpp"
 #include "physics/timestep.hpp"
 
 namespace Physics
@@ -22,9 +22,9 @@ namespace Physics
 
 	void Notification::getNotification(Timestep& timestep)
 	{
-		constexpr Timestep beginIngoringOffset{0,
+		static constexpr Timestep beginIngoringOffset{0,
 			static_cast<unsigned int>(Common::stepsPerSecond * 0.9f)};
-		constexpr Timestep endIgnoringOffset{0,
+		static constexpr Timestep endIgnoringOffset{0,
 			static_cast<unsigned int>(Common::stepsPerSecond * 0.2f)};
 		if (timestep <= m_simulationClock.getTime() - beginIngoringOffset)
 		{

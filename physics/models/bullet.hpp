@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common/state.hpp"
-#include "physics/model_dynamics/bullet_dynamics.hpp"
+#include "physics/modelDynamics/bulletDynamics.hpp"
 #include "physics/models/model.hpp"
 #include "physics/timestep.hpp"
 

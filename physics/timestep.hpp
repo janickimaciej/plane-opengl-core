@@ -4,8 +4,8 @@
 
 namespace Physics
 {
-	constexpr unsigned int millisecondsPerSecond = 1000;
-	constexpr unsigned int secondsPerMinute = 60;
+	inline constexpr unsigned int millisecondsPerSecond = 1000;
+	inline constexpr unsigned int secondsPerMinute = 60;
 
 	struct Timestep
 	{

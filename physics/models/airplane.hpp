@@ -1,13 +1,13 @@
 #pragma once
 
-#include "common/airplane_info.hpp"
-#include "common/airplane_type_name.hpp"
-#include "physics/airplane_params/airplane_params.hpp"
+#include "common/airplaneInfo.hpp"
+#include "common/airplaneTypeName.hpp"
+#include "physics/airplaneParams/airplaneParams.hpp"
 #include "physics/collisions/airplane.hpp"
-#include "physics/flight_ctrl.hpp"
-#include "physics/model_dynamics/airplane_dynamics.hpp"
+#include "physics/flightCtrl.hpp"
+#include "physics/modelDynamics/airplaneDynamics.hpp"
 #include "physics/models/model.hpp"
-#include "physics/player_info.hpp"
+#include "physics/playerInfo.hpp"
 #include "physics/timestep.hpp"
 
 #include <memory>

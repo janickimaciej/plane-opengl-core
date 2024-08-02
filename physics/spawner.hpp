@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/airplane_type_name.hpp"
+#include "common/airplaneTypeName.hpp"
 #include "common/state.hpp"
 #include "common/terrains/maps/map.hpp"
 

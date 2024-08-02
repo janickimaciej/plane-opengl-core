@@ -1,9 +1,9 @@
 #include "physics/spawner.hpp"
 
-#include "common/airplane_type_name.hpp"
+#include "common/airplaneTypeName.hpp"
 #include "common/state.hpp"
 #include "common/terrains/maps/map.hpp"
-#include "physics/airplane_definitions.hpp"
+#include "physics/airplaneDefinitions.hpp"
 
 #include <glm/glm.hpp>
 

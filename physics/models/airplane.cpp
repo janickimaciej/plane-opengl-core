@@ -1,11 +1,11 @@
 #include "physics/models/airplane.hpp"
 
-#include "physics/airplane_definitions.hpp"
-#include "physics/airplane_params/airplane_params.hpp"
-#include "physics/flight_ctrl.hpp"
-#include "physics/model_dynamics/airplane_dynamics.hpp"
+#include "physics/airplaneDefinitions.hpp"
+#include "physics/airplaneParams/airplaneParams.hpp"
+#include "physics/flightCtrl.hpp"
+#include "physics/modelDynamics/airplaneDynamics.hpp"
 #include "physics/models/model.hpp"
-#include "physics/player_input.hpp"
+#include "physics/playerInput.hpp"
 #include "physics/timestep.hpp"
 
 #include <glm/glm.hpp>

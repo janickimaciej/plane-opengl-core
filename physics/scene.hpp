@@ -1,12 +1,12 @@
 #pragma once
 
-#include "common/map_name.hpp"
-#include "common/scene_info.hpp"
+#include "common/mapName.hpp"
+#include "common/sceneInfo.hpp"
 #include "common/terrains/maps/map.hpp"
-#include "physics/day_night_cycle.hpp"
+#include "physics/dayNightCycle.hpp"
 #include "physics/models/airplane.hpp"
 #include "physics/models/bullet.hpp"
-#include "physics/player_info.hpp"
+#include "physics/playerInfo.hpp"
 #include "physics/timestep.hpp"
 
 #include <list>

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "common/map_name.hpp"
-#include "common/terrains/maps/airport_map.hpp"
-#include "common/terrains/maps/hills_map.hpp"
+#include "common/mapName.hpp"
+#include "common/terrains/maps/airportMap.hpp"
+#include "common/terrains/maps/hillsMap.hpp"
 
 #include <array>
 #include <memory>

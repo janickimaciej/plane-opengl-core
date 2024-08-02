@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/terrains/composite_terrain.hpp"
+#include "common/terrains/compositeTerrain.hpp"
 
 #include <glm/glm.hpp>
 

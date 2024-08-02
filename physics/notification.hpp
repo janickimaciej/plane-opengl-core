@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physics/simulation_clock.hpp"
+#include "physics/simulationClock.hpp"
 #include "physics/timestep.hpp"
 
 #include <mutex>
